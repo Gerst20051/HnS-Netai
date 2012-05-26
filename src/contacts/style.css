@@ -128,6 +128,10 @@ article > header aside .rightlogo {
 color:#fffbef;
 }
 
+article > header aside:hover .leftlogo {
+color:#8f886c;
+}
+
 article > header label {
 color:#faf9ee;
 font-size:18pt;
@@ -145,6 +149,11 @@ outline:0;
 padding:4px 6px;
 }
 
+article > header #search:focus,
+article > header #search:hover {
+border:1px solid #a39c82;
+}
+
 ul#contacts {
 background-color:#363432;
 margin:0;
@@ -153,10 +162,9 @@ padding:10px;
 
 ul#contacts li {
 background-color:#252521;
-cursor:pointer;
+cursor:default;
 list-style:none;
 margin:10px;
-padding:15px;
 }
 
 ul#contacts li:not(:first-child) {
@@ -167,23 +175,44 @@ ul#contacts li.new {
 display:none;
 }
 
+ul#contacts li.empty {
+color:#a39c82;
+font-size:14pt;
+padding:15px;
+text-align:center;
+}
+
+ul#contacts li > header {
+cursor:pointer;
+}
+
+ul#contacts li .name {
+color:#fbfbf7;
+padding:15px;
+}
+
 ul#contacts li .links {
 color:#fffefa;
 cursor:default;
 float:right;
+padding:15px;
 }
 
 ul#contacts li .links a {
 color:#a09986;
 }
 
-ul#contacts li .details {
+ul#contacts li .less {
 display:none;
-margin-top:10px;
 }
 
-ul#contacts li .name {
-color:#fbfbf7;
+ul#contacts li .savespan {
+display:none;
+}
+
+ul#contacts li .details {
+display:none;
+padding:0 15px 15px;
 }
 
 ul#contacts li label {
@@ -191,6 +220,7 @@ color:#9d9a86;
 display:block;
 float:left;
 margin-right:6px;
+padding-top:4px;
 text-align:right;
 width:50px;
 }
@@ -203,16 +233,14 @@ ul#contacts li input {
 background-color:transparent;
 border:0;
 color:#faf9f4;
-outline:0;
-padding:0;
+outline:solid 1px transparent;
+padding:4px;
+width:400px;
 }
 
-ul#contacts li .less {
-display:none;
-}
-
-ul#contacts li .savespan {
-display:none;
+ul#contacts li input:hover,
+ul#contacts li input:focus {
+outline:solid 1px #faf9f4;
 }
 
 footer {

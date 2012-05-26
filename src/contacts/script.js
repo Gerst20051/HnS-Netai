@@ -16,12 +16,16 @@ contacts: [],
 search: [],
 init: function(){
 	$.getJSON("ajax.php", {apikey:"hnsapi"}, function(response){
-		aC.contacts = response;
-		var contacts = "";
-		$.each(response, function(i,v){
-			contacts += aC.addContact(i,v.name,v.number,v.email);
-		});
-		$("ul#contacts").html(contacts);
+		if ($.isArray(response)) {
+			aC.contacts = response;
+			var contacts = "";
+			$.each(response, function(i,v){
+				contacts += aC.addContact(i,v.name,v.number,v.email);
+			});
+			$("ul#contacts").html(contacts);
+		} else {
+			$("ul#contacts").html('<li class="empty">No Contacts</li>');
+		}
 	});
 	aC.dom();
 },
@@ -38,12 +42,14 @@ dom: function(){
 		}
 	});
 	$("article > header #createcontact").live('click',function(){
-		// Check for search content and seach results length. if not empty and results = 0 use term as name.
-		var len = aC.contacts.push({"name":"","number":"","email":""});
-		$("ul#contacts").prepend(aC.addContact(len,true)).find("li:first").fadeIn();
+		var name = $.trim($("article > header #search").val());
+		if (name.length == 0 || aC.search.length > 0) name = "";
+		else $("article > header #search").val('');
+		var len = aC.contacts.push({"name":name,"number":"","email":""});
+		$("ul#contacts").prepend(aC.addContact(len,name)).find("li:first").fadeIn();
 	});
-	$("ul#contacts li").live('click',function(){
-		$(this).find('.details').slideToggle('fast');
+	$("ul#contacts li > header").live('click',function(){
+		$(this).parent().find('.details').slideToggle('fast');
 		if ($(this).find('.more').is(":visible")){
 			$(this).find('.more').hide().parent().find('.less').show();
 		} else {
@@ -61,23 +67,36 @@ dom: function(){
 		var email = target.find('#email').val();
 		aC.contacts[id-1] = {"name":name,"number":phone,"email":email};
 		$.post("ajax.php", {id:id,contact:aC.contacts[id-1],type:1,apikey:"hnsapi"}, function(response){
-			alert("updated");
+			target.find('.savespan').hide();
 		});
+		return false;
+	});
+	$("ul#contacts li .undo").live('click',function(){
+		var target = $(this).parents('li');
+		var id = target.attr('id').substring(8);
+		var contact = aC.contacts[id-1];
+		target.find('.name').html(contact.name);
+		target.find('#name').val(contact.name);
+		target.find('#phone').val(contact.phone);
+		target.find('#email').val(contact.email);
 	});
 	$("ul#contacts li .delete").live('click',function(){
 		var target = $(this).parents('li');
 		var id = target.attr('id').substring(8);
 		var name = target.find('#name').val();
-		if (confirm("Are you sure you want to delete "+name+"?")) alert(name+" deleted");
-		aC.contacts.splice(id-1,1);
-		
-		$.post("ajax.php", {id:id,type:2,apikey:"hnsapi"}, function(response){
-			alert("deleted");
-		});
+		if (confirm("Are you sure you want to delete "+name+"?")) {
+			aC.contacts.splice(id-1,1);
+			if (aC.contacts.length == 0) $("ul#contacts").html('<li class="empty">No Contacts</li>');
+			$.post("ajax.php", {id:id,type:2,apikey:"hnsapi"}, function(response){
+				$("ul#contacts li:eq("+id+")").remove();
+			});
+		}
 		return false;
 	});
 	$("ul#contacts li input").live('change',function(){
 		$(this).parents('li').find('.savespan').show();
+	}).live('click',function(){
+		$(this).select();
 	});
 	$("ul#contacts li input#name").live('keyup',function(){
 		var name = $(this).val();
@@ -86,9 +105,10 @@ dom: function(){
 	});
 },
 addContact: function(id,name,number,email){
+	if (aC.contacts.length < 2) $("ul#contacts").find('.empty').remove();
 	var html = '<li id="contact-'+id+'">';
-	if (name === true){ var html = '<li id="contact-'+id+'" class="new">'; name="New Contact"; number=""; email=""; }
-	html += '<header><aside class="links"><span class="savespan"><a href="#" class="save">save</a>&nbsp;&nbsp;|&nbsp;&nbsp;</span><a href="#" class="more">more</a><a href="#" class="less">less</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" class="delete">delete</a></aside><aside class="name">'+name+'</aside></header>';
+	if (arguments.length == 2){ var html = '<li id="contact-'+id+'" class="new">'; if ($.trim(name) == "") name="New Contact"; number=""; email=""; }
+	html += '<header><aside class="links"><span class="savespan"><a href="#" class="save">save</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" class="undo">undo</a>&nbsp;&nbsp;|&nbsp;&nbsp;</span><a href="#" class="more">more</a><a href="#" class="less">less</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" class="delete">delete</a></aside><aside class="name">'+name+'</aside></header>';
 	html += '<div class="details">';
 	html += '<div><label for="name">name</label><input id="name" type="text" value="'+name+'"/></div>';
 	html += '<div><label for="phone">phone</label><input id="phone" type="text" value="'+number+'"/></div>';
