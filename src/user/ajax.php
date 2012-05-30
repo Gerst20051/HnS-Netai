@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
 require_once 'functions.inc.php';
 require_once 'api.inc.php';
 require_once 'mysql.class.php';
-logout();
+
 if (!$con = mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD)) throw new Exception('Error connecting to the server');
 if (!mysql_select_db(MYSQL_DATABASE,$con)) throw new Exception('Error selecting database');
 
