@@ -15,7 +15,7 @@ case 'GET': $_REQ = $_GET; break;
 default: $_REQ = $_GET; break;
 }
 
-if (varcheck($_REQ['action'])) $ACTION = $_REQ['action'];
+setglobal($_REQ);
 
 switch ($_SERVER['REQUEST_METHOD']) {
 case 'POST':

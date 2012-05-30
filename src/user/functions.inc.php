@@ -18,9 +18,26 @@ function error($msg,$json=false){
 	else $final['error'] = $msg;
 }
 
-function varcheck($var){
-	if (isset($var) && !empty($var)) return true;
-	else return false;
+function varcheck($var,$type){
+	if ($type === true) {
+		if (isset($var) && !empty($var)) return true;
+		else return false;
+	} else {
+		if (isset($var) && !empty($var)) return $var;
+		else return '';
+	}
+}
+
+function setglobal($var){
+	if (varcheck($var,true)) {
+		foreach($var as $key=>$value) {
+			if (varcheck($value,true)) {
+				global ${strtoupper($key)};
+				${strtoupper($key)} = varcheck($value);
+			}
+		}
+		return true;
+	} else return false;
 }
 
 function filtervars($var){
@@ -50,10 +67,5 @@ function ucname($string){
 		}
 	}
 	return $string;
-}
-
-function key_exists($key,$array){
-	$value = (array_key_exists($key,$array) && !empty($array[$key])) ? $array[$key] : false;
-	return $value;
 }
 ?>
