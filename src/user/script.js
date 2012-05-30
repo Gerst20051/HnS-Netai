@@ -21,7 +21,7 @@ loggedIn: function(){
 		if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
 		else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
 	});
-	$(document.body).html('Logged In');
+	$(document.body).html('Logged In | <a class="logoutLink">Logout</a>');
 },
 loggedOut: function(){
 	$.get("ajax.php", {action:"hnsuser",apikey:"hnsapi"}, function(response){
@@ -33,18 +33,25 @@ login: function(){
 	if ($.trim(username.val()) == "") { username.addClass('error'); e = true; } else username.removeClass('error');
 	if ($.trim(password.val()) == "") { password.addClass('error'); e = true; } else password.removeClass('error');
 	if (!e) {
-		$('#f_login input').attr('disabled',true);
-		$.post("ajax.php", {login:true,username:$.trim(username.val()),password:secure('hns'+$.trim(password.val())),apikey:"hnsapi"}, function(response){
+		$("#f_login").find("input,textarea,select,:radio").attr('disabled',true);
+		var output = {}, inputs = $("#f_login").find("input").filter("[name]");
+		$.map(inputs, function(n, i){
+			output[n.name] = $.trim($(n).val());
+		});
+		output.password = secure('hns'+output.password);
+		$.post("ajax.php", {action:"login",form:output,apikey:"hnsapi"}, function(response){
 			if (stringToBoolean(response.logged)) aC.logged = true;
-			if (!aC.logged) $('#f_login input').attr('disabled',false);
+			if (aC.logged === false) $("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
 			else aC.loggedIn();
 		});
 	}
 },
 logout: function(){
-	$.post("ajax.php", {action:"logout",apikey:"hnsapi"}, function(){
-		aC.logged = false;
-		aC.user = {};
+	$.post("ajax.php", {action:"logout",apikey:"hnsapi"}, function(response){
+		if (!stringToBoolean(response.logged)) {
+			aC.logged = false;
+			aC.user = {};
+		}
 	});
 },
 regValidate: function(){
@@ -122,10 +129,16 @@ dom: function(){
 	});
 	$("#b_register").live('click',function(){
 		if (!aC.regValidate()) return;
-		$('#f_register input, #f_register select').attr('disabled',true);
-		log({action:"register",username:$.trim($("#reg_username").val()),password:$.trim($("#reg_password").val()),name:$.trim($("#reg_name").val()),email:$.trim($("#reg_email").val()),hometown:$.trim($("#reg_hometown").val()),city:$.trim($("#reg_city").val()),gender:$.trim($("#reg_gender").val()),bmonth:$("#reg_bmonth").val(),bday:$("#reg_bday").val(),byear:$("#reg_byear").val(),apikey:"hnsapi"});
-		$.post("ajax.php", {action:"register",username:$.trim($("#reg_username").val()),password:$.trim($("#reg_password").val()),name:$.trim($("#reg_name").val()),email:$.trim($("#reg_email").val()),hometown:$.trim($("#reg_hometown").val()),city:$.trim($("#reg_city").val()),gender:$.trim($("#reg_gender").val()),bmonth:$("#reg_bmonth").val(),bday:$("#reg_bday").val(),byear:$("#reg_byear").val(),apikey:"hnsapi"}, function(){
-			aC.logged = true; aC.loggedIn();
+		$("#f_register").find("input,textarea,select,:radio").attr('disabled',true);
+		var output = {}, inputs = $("#f_register").find("input,textarea,select,:radio").filter("[name]");
+		$.map(inputs, function(n, i){
+			output[n.name] = $.trim($(n).val());
+		});
+		output.password = secure('hns'+output.password);
+		$.post("ajax.php", {action:"register",form:output,apikey:"hnsapi"}, function(response){
+			if (stringToBoolean(response.logged)) {
+				aC.logged = true; aC.loggedIn();
+			} else $("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
 		});
 	});
 	$("#b_login").live('click',function(){

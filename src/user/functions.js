@@ -86,6 +86,20 @@ $.fn.center = function(){
 	});
 };
 
+$.fn.serializeObject = function(){
+	var o = {};
+	var a = this.serializeArray();
+	$.each(a, function(){
+		if (o[this.name] !== undefined) {
+			if (!o[this.name].push) o[this.name] = [o[this.name]];
+			o[this.name].push(this.value || '');
+		} else {
+			o[this.name] = this.value || '';
+		}
+	});
+	return o;
+};
+
 function timestamp(){
 	return Date.now || +new Date;
 }
@@ -105,12 +119,16 @@ function yesterday(datetime){
 }
 
 function stringToBoolean(string){
+	if (typeof string == "undefined") {
+		log("stringToBoolean Undefined Error");
+		return false;
+	}
 	if (typeof string == "boolean") return string;
-        switch(string.toLowerCase()) {
-                case "true": case "yes": case "1": return true;
-                case "false": case "no": case "0": case null: return false;
-                default: return false;
-        }
+	switch(string.toLowerCase()) {
+		case "true": case "yes": case "1": return true;
+		case "false": case "no": case "0": case null: return false;
+		default: return false;
+	}
 }
 
 function empty(mixed){
@@ -225,9 +243,9 @@ function array_map(callback){
 }
 
 function ucfirst(str){
-    str += '';
-    var f = str.charAt(0).toUpperCase();
-    return f + str.substr(1);
+	str += '';
+	var f = str.charAt(0).toUpperCase();
+	return f + str.substr(1);
 }
 
 function ucwords(str){

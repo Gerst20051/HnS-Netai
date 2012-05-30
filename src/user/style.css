@@ -25,6 +25,8 @@ display:none;
 
 #login > header,#register > header {
 font-weight:bold;
+padding-bottom:12px;
+text-align:center;
 }
 
 #f_login > div,#f_register > div {
@@ -45,8 +47,8 @@ width:300px;
 }
 
 #f_login input,#f_register input,#f_register select,.buttonTools input {
-background:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#fff));
-background:-moz-linear-gradient(top,#fff,#fff);
+background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#fff));
+background-image:-moz-linear-gradient(top,#fff,#fff);
 border:1px solid #717171;
 border-radius:3px;
 -khtml-border-radius:3px;
@@ -57,8 +59,13 @@ box-shadow:1px 1px 0 #efefef;
 -moz-box-shadow:1px 1px 0 #efefef;
 -webkit-box-shadow:1px 1px 0 #efefef;
 color:#444;
+filter:alpha(opacity=100);
+-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=100)";
 font-size:11pt;
 outline:none;
+opacity:1;
+-khtml-opacity:1;
+-moz-opacity:1;
 padding:5px;
 text-shadow:0 1px 0 #666;
 }

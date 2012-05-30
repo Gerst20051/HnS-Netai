@@ -23,8 +23,20 @@ function varcheck($var){
 	else return false;
 }
 
+function filtervars($var){
+	if (isset($var) && !empty($var)) return $var;
+	else return '';
+}
+
+function validateinput($vars,$required){
+	foreach ($vars as $key=>$value) {
+		if (in_array($key,$required) && trim($value) == "") return false;
+	}
+	return true;
+}
+
 function logout(){
-	if (isset($_SESSION)){
+	if (isset($_SESSION)) {
 		session_unset();
 		session_destroy();
 	}
