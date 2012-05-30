@@ -42,13 +42,18 @@ function logout(){
 	}
 }
 
-function ucname($string) {
+function ucname($string){
 	$string = ucwords(strtolower($string));
 	foreach (array('-', '\'', 'Mc') as $delimiter) {
-		if (strpos($string, $delimiter) !== false) {
-			$string = implode($delimiter, array_map('ucfirst', explode($delimiter, $string)));
+		if (strpos($string,$delimiter) !== false) {
+			$string = implode($delimiter, array_map('ucfirst', explode($delimiter,$string)));
 		}
 	}
 	return $string;
+}
+
+function key_exists($key,$array){
+	$value = (array_key_exists($key,$array) && !empty($array[$key])) ? $array[$key] : false;
+	return $value;
 }
 ?>
