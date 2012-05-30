@@ -100,10 +100,10 @@ if ($ACTION == "login") {
 }
 break;
 case 'GET':
-	if ($ACTION == 'logged') {
-		if (isset($_SESSION['logged'])) print_json(array('logged'=>true),true);
-		else print_json(array('logged'=>false),true);
-	} elseif ($ACTION == 'hnsuser') {
+if ($ACTION == 'logged') {
+	if (isset($_SESSION['logged'])) print_json(array('logged'=>true),true);
+	else print_json(array('logged'=>false),true);
+} elseif ($ACTION == 'hnsuser') {
 ?>
 <div class="lightbox">
 <div id="hnsuser" class="modal">
@@ -191,7 +191,7 @@ $("#reg_byear").append(byear);
 		exit();
 	}
 } elseif ($ACTION == "userdata") {
-	if (!varcheck($_REQ['uid'])) varcheck($_SESSION['user_id'],"uid")
+	if (!varcheck($_REQ['uid'])) varcheck($_SESSION['user_id'],"uid");
 	try {
 		$db = new MySQL();
 		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.default_image FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$uid.' LIMIT 1');
