@@ -9,7 +9,13 @@ require_once 'mysql.class.php';
 if (!$con = mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD)) throw new Exception('Error connecting to the server');
 if (!mysql_select_db(MYSQL_DATABASE,$con)) throw new Exception('Error selecting database');
 
-if (varcheck($_GET['action'])) $ACTION = $_GET['action'];
+switch ($_SERVER['REQUEST_METHOD']) {
+case 'POST': $_REQ = $_POST; break;
+case 'GET': $_REQ = $_GET; break;
+default: $_REQ = $_GET; break;
+}
+
+if (varcheck($_GET['action'])) $ACTION = $_REQ['action'];
 
 switch ($_SERVER['REQUEST_METHOD']) {
 case 'POST':
@@ -19,34 +25,34 @@ case 'GET':
 	if ($ACTION == 'logged') {
 		if (isset($_SESSION['logged'])) print_json(array('logged'=>true),true);
 		else print_json(array('logged'=>false),true);
-	} elseif ($ACTION == 'login') {
+	} elseif ($ACTION == 'hnsuser') {
 ?>
+<div class="lightbox">
+<div id="hnsuser" class="modal">
 <div id="login">
-<form id="f_login" action="#" method="post" onsubmit="return false">
+<header>Login</header>
+<form id="f_login" onsubmit="return false">
 <input type="hidden" name="login"/>
 <div><label for="lusername">Username:</label><input type="text" name="lusername" id="lusername" value=""/></div>
 <div><label for="lpassword">Password:</label><input type="password" name="lpassword" id="lpassword" value=""/></div>
 <div class="buttonTools">
 <ul class="toolList lfloat">
-<li class="listItem"><label class="loginButton" for="b_login_splash"><input value="Login" type="submit" id="b_login_splash"/></label></li>
-<li class="listItem"><label class="registerButton" for="b_register_splash"><input value="Register" type="button" id="b_register_splash"/></label></li>
+<li class="listItem"><label class="loginButton" for="b_login_splash"><input id="b_login_splash" value="Login" type="submit"/></label></li>
+<li class="listItem"><label class="registerButton" for="b_register_splash"><input id="b_register_splash" value="Register" type="button"/></label></li>
 </ul>
 </div>
 </form>
 </div>
-<?php
-} elseif ($_GET['p'] == 'register') {
-?>
 <div id="register">
 <header>Register</header>
-<form id="f_register" action="#" method="post" onsubmit="return false">
+<form id="f_register" onsubmit="return false">
 <input type="hidden" name="register"/>
-<div><label for="reg_username">Username:</label><input type="text" name="reg_username" id="reg_username" value=""/></div>
-<div><label for="reg_password">Password:</label><input type="password" name="reg_password" id="reg_password" value=""/></div>
-<div><label for="reg_name">Full Name:</label><input type="text" name="reg_name" id="reg_name" value=""/></div>
-<div><label for="reg_email">Email:</label><input type="email" name="reg_email" id="reg_email" value=""/></div>
-<div><label for="reg_city">Current City:</label><input type="text" name="reg_city" id="reg_city" value=""/></div>
-<div><label for="reg_hometown">Hometown:</label><input type="text" name="reg_hometown" id="reg_hometown" value=""/></div>
+<div><label for="reg_username">Username:</label><input id="reg_username" name="reg_username" type="text" value=""/></div>
+<div><label for="reg_password">Password:</label><input id="reg_password" name="reg_password" type="password" value=""/></div>
+<div><label for="reg_name">Full Name:</label><input id="reg_name" name="reg_name" type="text" value=""/></div>
+<div><label for="reg_email">Email:</label><input id="reg_email" name="reg_email" type="email" value=""/></div>
+<div><label for="reg_city">Current City:</label><input id="reg_city" name="reg_city" type="text" value=""/></div>
+<div><label for="reg_hometown">Hometown:</label><input id="reg_hometown" name="reg_hometown" type="text" value=""/></div>
 <div>
 <label for="reg_gender">Gender:</label>
 <select name="reg_gender" id="reg_gender">
@@ -77,23 +83,35 @@ case 'GET':
 </div>
 <div class="buttonTools">
 <ul class="toolList lfloat">
-<li class="listItem"><label class="loginButton" for="b_login"><input value="Login" type="submit" id="b_login"/></label></li>
-<li class="listItem"><label class="registerButton" for="b_register"><input value="Register" type="submit" id="b_register"/></label></li>
+<li class="listItem"><label class="loginButton" for="b_login"><input id="b_login" value="Login" type="submit"/></label></li>
+<li class="listItem"><label class="registerButton" for="b_register"><input id="b_register" value="Register" type="submit"/></label></li>
 </ul>
 </div>
 </form>
 </div>
 <script>
 (function(){
-var bday="",byear="";
+var bday="",byear="",theDate=new Date();
 for (i=1;i<=31;i++){bday+="<option value=\""+i+"\">"+i+"</option>";}
-for (i=2011;i>=1902;i--){byear+="<option value=\""+i+"\">"+i+"</option>";}
+for (i=theDate.getFullYear();i>=1902;i--){byear+="<option value=\""+i+"\">"+i+"</option>";}
 $("#reg_bday").append(bday);
 $("#reg_byear").append(byear);
 })();
 </script>
+</div>
+</div>
 <?php
-}
+	} elseif ($ACTION == "username") {
+		try {
+			$db = new MySQL();
+			$db->query('SELECT username FROM login WHERE username = "'.$_REQ['username'].'" LIMIT 1');
+			if ($db->numRows() == 1) print_json(array('user'=>true),true);
+			else print_json(array('user'=>false),true);
+		} catch(Exception $e) {
+			echo $e->getMessage();
+			exit();
+		}
+	}
 break;
 }
 ?>

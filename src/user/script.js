@@ -4,6 +4,8 @@ function main(){
 window.aC = {
 title: "HnS User",
 logged: false,
+loginFocus: false,
+registerFocus: false,
 user: {},
 init: function(){
 	$.getJSON("ajax.php", {action:"logged",apikey:"hnsapi"}, function(response){
@@ -14,7 +16,7 @@ init: function(){
 },
 loggedIn: function(){
 	if (aC.logged === false) return;
-	$.getJSON('ajax.php', {p:"userdata"}, function(response) {
+	$.getJSON("ajax.php", {action:"userdata",apikey:"hnsapi"}, function(response){
 		aC.user = response;
 		if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
 		else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
@@ -22,7 +24,9 @@ loggedIn: function(){
 	$(document.body).html('Logged In');
 },
 loggedOut: function(){
-	$(document.body).html('Logged Out');
+	$.get("ajax.php", {action:"hnsuser",apikey:"hnsapi"}, function(response){
+		$(document.body).html(response).find('#hnsuser').center().parent().hide().css('visibility','visible').fadeIn('slow');
+	});
 },
 login: function(){
 	var e = false, username = $("#lusername"), password = $("#lpassword");
@@ -30,27 +34,26 @@ login: function(){
 	if ($.trim(password.val()) == "") { password.addClass('error'); e = true; } else password.removeClass('error');
 	if (!e) {
 		$('#f_login input').attr('disabled',true);
-		$.post("ajax.php", {login:true,username:$.trim(username.val()),password:secure('hns'+$.trim(password.val()))}, function(response){
-			if (aC.stringToBoolean(response)) aC.logged = true;
+		$.post("ajax.php", {login:true,username:$.trim(username.val()),password:secure('hns'+$.trim(password.val())),apikey:"hnsapi"}, function(response){
+			if (stringToBoolean(response.logged)) aC.logged = true;
 			if (!aC.logged) $('#f_login input').attr('disabled',false);
 			else aC.loggedIn();
 		});
 	}
 },
 logout: function(){
-	$.post('ajax.php', {action:"logout"}, function(){
+	$.post("ajax.php", {action:"logout",apikey:"hnsapi"}, function(){
 		aC.logged = false;
 		aC.user = {};
 	});
 },
 regValidate: function(){
 	var e = false,
-	username = $("#reg_username"),
-	password = $("#reg_password"),
-	name = $("#reg_name"),
-	email = $("#reg_email"),
-	city = $("#reg_city"),
-	hometown = $("#reg_hometown"),
+	username = $("#reg_username"), username_trim = $.trim(username.val()),
+	password = $("#reg_password"), password_trim = $.trim(password.val()),
+	name = $("#reg_name"), name_trim = $.trim(name.val()),
+	email = $("#reg_email"), email_trim = $.trim(email.val()),
+	city = $("#reg_city"), city_trim = $.trim(city.val()),
 	bmonth = $("#reg_bmonth"),
 	bday = $("#reg_bday"),
 	byear = $("#reg_byear"),
@@ -58,19 +61,19 @@ regValidate: function(){
 	nameReg = /[A-Za-z'-]/,
 	emailReg = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}?$/i;
 
-	if ($.trim(username.val()) == "") { username.addClass('error'); e = true; }
-	else if (usernameReg.test($.trim(username.val()))) { username.addClass('error'); e = true; }
-	else { aC.checkUsername($.trim(username.val())); if (username.hasClass('error')) e = true; }
-	if ($.trim(password.val()) == "") { password.addClass('error'); e = true; } else password.removeClass('error');
+	if (username_trim == "") { username.addClass('error'); e = true; }
+	else if (usernameReg.test(username_trim)) { username.addClass('error'); e = true; }
+	else { aC.checkUsername(username_trim); if (username.hasClass('error')) e = true; }
+	if (password_trim == "") { password.addClass('error'); e = true; } else password.removeClass('error');
 
-	if ($.trim(name.val()) == "") { name.addClass('error'); e = true; }
-	else if (!nameReg.test($.trim(name.val()))) { name.addClass('error'); e = true; }
-	else if ($.trim(name.val()).split(' ').length < 2) { name.addClass('error'); e = true; } else name.removeClass('error');
+	if (name_trim == "") { name.addClass('error'); e = true; }
+	else if (!nameReg.test(name_trim)) { name.addClass('error'); e = true; }
+	else if (name_trim.split(' ').length < 2) { name.addClass('error'); e = true; } else name.removeClass('error');
 
-	if ($.trim(email.val()) == "") { email.addClass('error'); e = true; }
-	else if (!emailReg.test($.trim(email.val()))) { email.addClass('error'); e = true; } else email.removeClass('error');
+	if (email_trim == "") { email.addClass('error'); e = true; }
+	else if (!emailReg.test(email_trim)) { email.addClass('error'); e = true; } else email.removeClass('error');
 
-	if ($.trim(city.val()) == "") { city.addClass('error'); e = true; } else city.removeClass('error');
+	if (city_trim == "") { city.addClass('error'); e = true; } else city.removeClass('error');
 	if (bmonth.val() == 0) { bmonth.addClass('error'); e = true; } else bmonth.removeClass('error');
 	if (bday.val() == 0) { bday.addClass('error'); e = true; } else bday.removeClass('error');
 	if (byear.val() == 0) { byear.addClass('error'); e = true; } else byear.removeClass('error');
@@ -78,9 +81,10 @@ regValidate: function(){
 	return !e;
 },
 checkUsername: function(uname){
+	uname = $.trim(uname);
 	if (uname != "") {
-		$.get('ajax.php', {p:"username",username:uname}, function(response){
-			if (aC.stringToBoolean(response)) $("#reg_username").addClass('error');
+		$.get("ajax.php", {action:"username",username:uname,apikey:"hnsapi"}, function(response){
+			if (stringToBoolean(response.user)) $("#reg_username").addClass('error');
 			else $("#reg_username").removeClass('error');
 		});
 	} else $("#reg_username").addClass('error');
@@ -88,17 +92,54 @@ checkUsername: function(uname){
 onKeyDown: function(e){
 	var keyCode = e.keyCode || e.which;
 	if (aC.logged === false) {
-		if (keyCode == 13) {
+		if (keyCode == keys.ENTER) {
 			if (aC.loginFocus) $("#b_login_splash").click();
 			else if (aC.registerFocus) $("#b_register").click();
 		}
 	}
 },
 dom: function(){
-	
-},
+	$("#lusername, #lpassword").live('focus',function(){
+		aC.loginFocus = true;
+	}).live('blur',function(){
+		aC.loginFocus = false;
+	});
+	$("#b_login_splash").live('click',function(){
+		aC.login();
+	});
+	$("#b_register_splash").live('click',function(){
+		$("#register").show();
+		$("#login").hide();
+		$("#hnsuser").center();
+	});
+	$("#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city").live('focus',function(){
+		aC.registerFocus = true;
+	}).live('blur',function(){
+		aC.registerFocus = false;
+	});
+	$("#reg_username").live('blur',function(){
+		aC.checkUsername(this.value);
+	});
+	$("#b_register").live('click',function(){
+		if (!aC.regValidate()) return;
+		$('#f_register input, #f_register select').attr('disabled',true);
+		log({action:"register",username:$.trim($("#reg_username").val()),password:$.trim($("#reg_password").val()),name:$.trim($("#reg_name").val()),email:$.trim($("#reg_email").val()),hometown:$.trim($("#reg_hometown").val()),city:$.trim($("#reg_city").val()),gender:$.trim($("#reg_gender").val()),bmonth:$("#reg_bmonth").val(),bday:$("#reg_bday").val(),byear:$("#reg_byear").val(),apikey:"hnsapi"});
+		$.post("ajax.php", {action:"register",username:$.trim($("#reg_username").val()),password:$.trim($("#reg_password").val()),name:$.trim($("#reg_name").val()),email:$.trim($("#reg_email").val()),hometown:$.trim($("#reg_hometown").val()),city:$.trim($("#reg_city").val()),gender:$.trim($("#reg_gender").val()),bmonth:$("#reg_bmonth").val(),bday:$("#reg_bday").val(),byear:$("#reg_byear").val(),apikey:"hnsapi"}, function(){
+			aC.logged = true; aC.loggedIn();
+		});
+	});
+	$("#b_login").live('click',function(){
+		$("#login").show();
+		$("#register").hide();
+		$("#hnsuser").center();
+	});
+	$(".logoutLink").live('click',function(){
+		aC.logout();
+	});
+}
 };
 
+$(document.documentElement).keydown(window.aC.onKeyDown);
 $(document).ready(window.aC.init);
 
 return true;
