@@ -19,10 +19,15 @@ setglobal($_REQ);
 
 switch ($_SERVER['REQUEST_METHOD']) {
 case 'POST':
-if ($ACTION == "login") {
+if ($ACTION == 'login') {
+	$VARS = array_map('varcheck',$_REQ['form']);
+	if ($VARS['formname'] != 'login') print_json(array('logged'=>false),true);
+	else unset($VARS['formname']);
+	if (!validateinput($VARS,array('username','password'))) print_json(array('logged'=>false),true);
+	extract($VARS);
 	try {
 		$db = new MySQL();
-		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$_POST['username'],substr(base64_decode($_POST['password']),3)));
+		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$username,substr(base64_decode($password),3)));
 		if ($db->numRows() == 1) {
 			$row = $db->fetchAssocRow();
 			$_SESSION['logged'] = true;
@@ -30,23 +35,23 @@ if ($ACTION == "login") {
 			$_SESSION['username'] = $row['username'];
 			$_SESSION['access_level'] = $row['access_level'];
 			$_SESSION['last_login'] = $row['last_login'];
-			if (isset($row['middlename']) && !empty($row['middlename'])) $_SESSION['fullname'] = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'];
+			if (varcheck($row['middlename'],true)) $_SESSION['fullname'] = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'];
 			else $_SESSION['fullname'] = $row['firstname'] . ' ' . $row['lastname'];
 			$_SESSION['firstname'] = $row['firstname'];
-			if (isset($row['middlename']) && !empty($row['middlename'])) $_SESSION['middlename'] = $row['middlename'];
+			if (varcheck($row['middlename'],true)) $_SESSION['middlename'] = $row['middlename'];
 			$_SESSION['lastname'] = $row['lastname'];
-			if (isset($row['default_image']) && !empty($row['default_image'])) $_SESSION['default_image'] = $row['default_image'];
+			if (varcheck($row['default_image'],true)) $_SESSION['default_image'] = $row['default_image'];
 			print_json(array('logged'=>true),true);
 		} else print_json(array('logged'=>false),false);
 	} catch(Exception $e) {
 		echo $e->getMessage();
 		exit();
 	}
-} elseif ($ACTION == "register") {
-	$VARS = array_map("filtervars",$_REQ["form"]);
-	if ($VARS["formname"] != "register") print_json(array('logged'=>false),true);
-	else unset($VARS["formname"]);
-	$required = array("username","password","name","email","city","gender","bmonth","bday","byear");
+} elseif ($ACTION == 'register') {
+	$VARS = array_map('varcheck',$_REQ['form']);
+	if ($VARS['formname'] != 'register') print_json(array('logged'=>false),true);
+	else unset($VARS['formname']);
+	$required = array('username','password','name','email','city','gender','bmonth','bday','byear');
 	if (!validateinput($VARS,$required)) print_json(array('logged'=>false),true);
 	extract($VARS);
 	if (empty($hometown)) $hometown = $city;
@@ -94,7 +99,7 @@ if ($ACTION == "login") {
 		echo $e->getMessage();
 		exit();
 	}
-} elseif ($ACTION == "logout") {
+} elseif ($ACTION == 'logout') {
 	logout();
 	print_json(array('logged'=>false),true);
 }
@@ -179,11 +184,10 @@ $("#reg_byear").append(byear);
 </div>
 </div>
 <?php
-} elseif ($ACTION == "username") {
-	varcheck($_REQ['username']);
+} elseif ($ACTION == 'username') {
 	try {
 		$db = new MySQL();
-		$db->query('SELECT username FROM login WHERE username = "'.$_REQ['username'].'" LIMIT 1');
+		$db->query('SELECT username FROM login WHERE username = "'.$USERNAME.'" LIMIT 1');
 		if ($db->numRows() == 1) print_json(array('user'=>true),true);
 		else print_json(array('user'=>false),true);
 	} catch(Exception $e) {
@@ -191,10 +195,10 @@ $("#reg_byear").append(byear);
 		exit();
 	}
 } elseif ($ACTION == "userdata") {
-	if (!varcheck($_REQ['uid'])) varcheck($_SESSION['user_id'],"uid");
+	varcheck($UID,true,$_SESSION['user_id'],"uid");
 	try {
 		$db = new MySQL();
-		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.default_image FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$uid.' LIMIT 1');
+		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.default_image FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$UID.' LIMIT 1');
 		if ($db->numRows() == 1) {
 			header('Content-Type: application/json; charset=utf8');
 			print_json(array('user'=>$db->fetchAssocRow()));

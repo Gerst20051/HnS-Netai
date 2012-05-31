@@ -17,11 +17,13 @@ init: function(){
 loggedIn: function(){
 	if (aC.logged === false) return;
 	$.getJSON("ajax.php", {action:"userdata",apikey:"hnsapi"}, function(response){
-		aC.user = response;
-		if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
-		else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
+		if (response.user !== false) {
+			aC.user = response.user;
+			if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
+			else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
+			$(document.body).html('<div>Welcome '+aC.user.fullname+' | <span class="logout-link link">Logout</span></div>');
+		} else aC.logout();
 	});
-	$(document.body).html('Logged In | <a class="logoutLink">Logout</a>');
 },
 loggedOut: function(){
 	$.get("ajax.php", {action:"hnsuser",apikey:"hnsapi"}, function(response){
@@ -51,6 +53,7 @@ logout: function(){
 		if (!stringToBoolean(response.logged)) {
 			aC.logged = false;
 			aC.user = {};
+			aC.loggedOut();
 		}
 	});
 },
@@ -146,7 +149,7 @@ dom: function(){
 		$("#register").hide();
 		$("#hnsuser").center();
 	});
-	$(".logoutLink").live('click',function(){
+	$(".logout-link").live('click',function(){
 		aC.logout();
 	});
 }

@@ -18,13 +18,24 @@ function error($msg,$json=false){
 	else $final['error'] = $msg;
 }
 
-function varcheck($var,$type){
-	if ($type === true) {
-		if (isset($var) && !empty($var)) return true;
-		else return false;
-	} else {
+function varcheck($var,$type,$rvalue,$rname){
+	if (func_num_args() == 1) {
 		if (isset($var) && !empty($var)) return $var;
 		else return '';
+	} else {
+		if ($type === true) {
+			if (isset($var) && !empty($var)) return true;
+			elseif (isset($rvalue) && !empty($rvalue)) {
+				if (isset($rname) && !empty($rname)) {
+					global ${strtoupper($rname)};
+					${strtoupper($rname)} = $rvalue;
+					return true;
+				} else return false;
+			} else return false;
+		} else {
+			if (isset($var) && !empty($var)) return $var;
+			else return '';
+		}
 	}
 }
 
@@ -38,11 +49,6 @@ function setglobal($var){
 		}
 		return true;
 	} else return false;
-}
-
-function filtervars($var){
-	if (isset($var) && !empty($var)) return $var;
-	else return '';
 }
 
 function validateinput($vars,$required){
@@ -67,5 +73,24 @@ function ucname($string){
 		}
 	}
 	return $string;
+}
+
+/* Test Functions */
+
+function vname(&$var,$scope=false,$prefix='unique',$suffix='value'){
+	if ($scope) $vals = $scope; else $vals = $GLOBALS;
+	$old = $var;
+	$var = $new = $prefix.rand().$suffix;
+	$vname = false;
+	foreach ($vals as $key => $val) {
+		if ($val === $new) $vname = $key;
+	}
+	$var = $old;
+	return $vname;
+}
+
+function var_name(&$var, $scope=0){
+	$old = $var;
+	if (($key = array_search($var = 'unique'.rand().'value', !$scope ? $GLOBALS : $scope)) && $var = $old) return $key;  
 }
 ?>
