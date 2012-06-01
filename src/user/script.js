@@ -4,12 +4,13 @@ function main(){
 $w.aC = {
 title: "HnS User Dashboard",
 ajaxurl: $host+"ajax.php",
+apikey: "hnsapi",
 logged: false,
 loginFocus: false,
 registerFocus: false,
 user: {},
 init: function(){
-	$.getJSON(aC.ajaxurl, {action:"logged",apikey:"hnsapi"}, function(response){
+	$.getJSON(aC.ajaxurl, {action:"logged",apikey:aC.apikey}, function(response){
 		if (response.logged === true) aC.logged = true;
 		if (aC.logged === true) aC.loggedIn(); else aC.loggedOut();
 	});
@@ -17,7 +18,7 @@ init: function(){
 },
 loggedIn: function(){
 	if (aC.logged === false) return;
-	$.getJSON(aC.ajaxurl, {action:"userdata",apikey:"hnsapi"}, function(response){
+	$.getJSON(aC.ajaxurl, {action:"userdata",apikey:aC.apikey}, function(response){
 		if (response.user !== false) {
 			aC.user = response.user;
 			if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
@@ -27,7 +28,7 @@ loggedIn: function(){
 	});
 },
 loggedOut: function(){
-	$.get(aC.ajaxurl, {action:"hnsuser",apikey:"hnsapi"}, function(response){
+	$.get(aC.ajaxurl, {action:"hnsuser",apikey:aC.apikey}, function(response){
 		$(document.body).html(response).find('#hnsuser').center().parent().hide().css('visibility','visible').fadeIn('slow');
 	});
 },
@@ -42,7 +43,7 @@ login: function(){
 			output[n.name] = $.trim($(n).val());
 		});
 		output.password = secure('hns'+output.password);
-		$.post(aC.ajaxurl, {action:"login",form:output,apikey:"hnsapi"}, function(response){
+		$.post(aC.ajaxurl, {action:"login",form:output,apikey:aC.apikey}, function(response){
 			if (stringToBoolean(response.logged)) aC.logged = true;
 			if (aC.logged === false) $("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
 			else aC.loggedIn();
@@ -50,7 +51,7 @@ login: function(){
 	}
 },
 logout: function(){
-	$.post(aC.ajaxurl, {action:"logout",apikey:"hnsapi"}, function(response){
+	$.post(aC.ajaxurl, {action:"logout",apikey:aC.apikey}, function(response){
 		if (!stringToBoolean(response.logged)) {
 			aC.logged = false;
 			aC.user = {};
@@ -113,7 +114,7 @@ getLocation: function(query){
 checkUsername: function(uname){
 	uname = $.trim(uname);
 	if (uname != "") {
-		$.get(aC.ajaxurl, {action:"username",username:uname,apikey:"hnsapi"}, function(response){
+		$.get(aC.ajaxurl, {action:"username",username:uname,apikey:aC.apikey}, function(response){
 			if (stringToBoolean(response.user)) $("#reg_username").addClass('error');
 			else $("#reg_username").removeClass('error');
 		});
@@ -161,7 +162,7 @@ dom: function(){
 			output[n.name] = $.trim($(n).val());
 		});
 		output.password = secure('hns'+output.password);
-		$.post(aC.ajaxurl, {action:"register",form:output,apikey:"hnsapi"}, function(response){
+		$.post(aC.ajaxurl, {action:"register",form:output,apikey:aC.apikey}, function(response){
 			if (stringToBoolean(response.logged)) {
 				aC.logged = true; aC.loggedIn();
 			} else $("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
