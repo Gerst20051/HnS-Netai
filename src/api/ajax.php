@@ -124,7 +124,7 @@ if ($ACTION == 'logged') {
 	else print_json(array('logged'=>false),true);
 } elseif ($ACTION == 'hnsuser') {
 ?>
-<div class="lightbox">
+<div class="hns lightbox">
 <div id="hnsuser" class="modal">
 <div id="login">
 <header>Login using Homenet Spaces</header>
