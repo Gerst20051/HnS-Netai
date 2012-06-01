@@ -1,81 +1,100 @@
 $w.$&&main()||function(){var a=$d.createElement("script");a.setAttribute("type","text/javascript");a.setAttribute("src","jquery.js");a.onload=main;a.onreadystatechange=function(){if(this.readyState=="complete"||this.readyState=="loaded")main()};($d.getElementsByTagName("head")[0]||$d.documentElement).appendChild(a)}();
 
 function main(){
-$w.aC = {
-title: "HnS User Dashboard",
+var hns = {
+title: "HnS Netai API",
 ajaxurl: $host+"ajax.php",
-apikey: "hnsapi",
+apikey: "",
+loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
 user: {},
+visible: ["logged","user","go","logout"],
 init: function(){
-	$.getJSON(aC.ajaxurl, {action:"logged",apikey:aC.apikey}, function(response){
-		if (response.logged === true) aC.logged = true;
-		if (aC.logged === true) aC.loggedIn(); else aC.loggedOut();
+	if (hns.loaded !== false) return;
+	$.getJSON(hns.ajaxurl, {action:"init",apikey:hns.apikey}, function(response){
+		if (response.logged === true) hns.logged = true;
+		$($d.body).append(response.html);
+		hns.loaded = true;
 	});
-	aC.dom();
+	hns.dom();
+},
+go: function(args){
+	if (hns.loaded === false) {
+		if (args == "undefined") return;
+		var options = ["apikey"];
+		for (var index in args) {
+			if ($.inArray(index,options)) hns[index] = args[index];
+		}
+		hns.init();
+	}
+	if (hns.logged) hns.loggedIn();
+	else hns.loggedOut();
 },
 loggedIn: function(){
-	if (aC.logged === false) return;
-	$.getJSON(aC.ajaxurl, {action:"userdata",apikey:aC.apikey}, function(response){
+	if (hns.logged === false) return;
+	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
-			aC.user = response.user;
-			if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
-			else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
-			$($d.body).html('<div>Welcome '+aC.user.fullname+' | <span class="logout-link link">Logout</span></div>');
-		} else aC.logout();
+			hns.user = response.user;
+			if (hns.user.middlename != "") hns.user.fullname = hns.user.firstname+' '+hns.user.middlename+' '+hns.user.lastname;
+			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
+			$("#hns").parent().css('visibility','hidden');
+		} else hns.logout();
 	});
 },
 loggedOut: function(){
-	$.get(aC.ajaxurl, {action:"hnsuser",apikey:aC.apikey}, function(response){
-		$($d.body).append(response).find('#hnsuser').center().parent().hide().css('visibility','visible').fadeIn('slow');
-	});
+	if (hns.logged === true) return;
+	$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
 },
 login: function(){
-	var e = false, username = $("#lusername"), password = $("#lpassword");
+	var e = false, username = $$("#lusername"), password = $$("#lpassword");
 	if ($.trim(username.val()) == "") { username.addClass('error'); e = true; } else username.removeClass('error');
 	if ($.trim(password.val()) == "") { password.addClass('error'); e = true; } else password.removeClass('error');
 	if (!e) {
-		$("#f_login").find("input,textarea,select,:radio").attr('disabled',true);
-		var output = {}, inputs = $("#f_login").find("input").filter("[name]");
+		$$("#f_login").find("input,textarea,select,:radio").attr('disabled',true);
+		var output = {}, inputs = $$("#f_login").find("input").filter("[name]");
 		$.map(inputs, function(n, i){
 			output[n.name] = $.trim($(n).val());
 		});
 		output.password = secure('hns'+output.password);
-		$.post(aC.ajaxurl, {action:"login",form:output,apikey:aC.apikey}, function(response){
-			if (stringToBoolean(response.logged)) aC.logged = true;
-			if (aC.logged === false) $("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
-			else aC.loggedIn();
+		$.post(hns.ajaxurl, {action:"login",form:output,apikey:hns.apikey}, function(response){
+			if (stringToBoolean(response.logged)) {
+				hns.logged = true;
+				hns.loggedIn();
+				$$("#f_login").clearForm();
+			}
+			$$("#f_login").clearForm();
+			$$("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
 		});
 	}
 },
 logout: function(){
-	$.post(aC.ajaxurl, {action:"logout",apikey:aC.apikey}, function(response){
+	$.post(hns.ajaxurl, {action:"logout",apikey:hns.apikey}, function(response){
 		if (!stringToBoolean(response.logged)) {
-			aC.logged = false;
-			aC.user = {};
-			aC.loggedOut();
+			hns.logged = false;
+			hns.user = {};
+			hns.loggedOut();
 		}
 	});
 },
 regValidate: function(){
 	var e = false,
-	username = $("#reg_username"), username_trim = $.trim(username.val()),
-	password = $("#reg_password"), password_trim = $.trim(password.val()),
-	name = $("#reg_name"), name_trim = $.trim(name.val()),
-	email = $("#reg_email"), email_trim = $.trim(email.val()),
-	city = $("#reg_city"), city_trim = $.trim(city.val()),
-	bmonth = $("#reg_bmonth"),
-	bday = $("#reg_bday"),
-	byear = $("#reg_byear"),
+	username = $$("#reg_username"), username_trim = $.trim(username.val()),
+	password = $$("#reg_password"), password_trim = $.trim(password.val()),
+	name = $$("#reg_name"), name_trim = $.trim(name.val()),
+	email = $$("#reg_email"), email_trim = $.trim(email.val()),
+	city = $$("#reg_city"), city_trim = $.trim(city.val()),
+	bmonth = $$("#reg_bmonth"),
+	bday = $$("#reg_bday"),
+	byear = $$("#reg_byear"),
 	usernameReg = /\W/,
 	nameReg = /[A-Za-z'-]/,
 	emailReg = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}?$/i;
 
 	if (username_trim == "") { username.addClass('error'); e = true; }
 	else if (usernameReg.test(username_trim)) { username.addClass('error'); e = true; }
-	else { aC.checkUsername(username_trim); if (username.hasClass('error')) e = true; }
+	else { hns.checkUsername(username_trim); if (username.hasClass('error')) e = true; }
 	if (password_trim == "") { password.addClass('error'); e = true; } else password.removeClass('error');
 
 	if (name_trim == "") { name.addClass('error'); e = true; }
@@ -114,73 +133,78 @@ getLocation: function(query){
 checkUsername: function(uname){
 	uname = $.trim(uname);
 	if (uname != "") {
-		$.get(aC.ajaxurl, {action:"username",username:uname,apikey:aC.apikey}, function(response){
-			if (stringToBoolean(response.user)) $("#reg_username").addClass('error');
-			else $("#reg_username").removeClass('error');
+		$.get(hns.ajaxurl, {action:"username",username:uname,apikey:hns.apikey}, function(response){
+			if (stringToBoolean(response.user)) $$("#reg_username").addClass('error');
+			else $$("#reg_username").removeClass('error');
 		});
-	} else $("#reg_username").addClass('error');
+	} else $$("#reg_username").addClass('error');
 },
 onKeyDown: function(e){
 	var keyCode = e.keyCode || e.which;
-	if (aC.logged === false) {
+	if (hns.logged === false) {
 		if (keyCode == keys.ENTER) {
-			if (aC.loginFocus) $("#b_login_splash").click();
-			else if (aC.registerFocus) $("#b_register").click();
+			if (hns.loginFocus) $$("#b_login_splash").click();
+			else if (hns.registerFocus) $$("#b_register").click();
 		}
 	}
 },
 dom: function(){
-	$("#lusername, #lpassword").live('focus',function(){
-		aC.loginFocus = true;
+	$$("#lusername, #lpassword").live('focus',function(){
+		hns.loginFocus = true;
 	}).live('blur',function(){
-		aC.loginFocus = false;
+		hns.loginFocus = false;
 	});
-	$("#b_login_splash").live('click',function(){
-		aC.login();
+	$$("#b_login_splash").live('click',function(){
+		hns.login();
 	});
-	$("#b_register_splash").live('click',function(){
-		$("#register").show();
-		$("#login").hide();
-		$("#hnsuser").center();
+	$$("#hns").find("#b_register_splash").live('click',function(){
+		$$("#register").show();
+		$$("#login").hide();
+		$("#hns").center();
 	});
-	$("#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city").live('focus',function(){
-		aC.registerFocus = true;
+	$$("#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city").live('focus',function(){
+		hns.registerFocus = true;
 	}).live('blur',function(){
-		aC.registerFocus = false;
+		hns.registerFocus = false;
 	});
-	$("#reg_username").live('blur',function(){
-		aC.checkUsername(this.value);
+	$$("#reg_username").live('blur',function(){
+		hns.checkUsername(this.value);
 	});
-	$("#reg_hometown").live('keyup',function(){
-		aC.getLocation(this.value);
+	$$("#reg_hometown").live('keyup',function(){
+		hns.getLocation(this.value);
 	});
-	$("#b_register").live('click',function(){
-		if (!aC.regValidate()) return;
-		$("#f_register").find("input,textarea,select,:radio").attr('disabled',true);
-		var output = {}, inputs = $("#f_register").find("input,textarea,select,:radio").filter("[name]");
+	$$("#b_register").live('click',function(){
+		if (!hns.regValidate()) return;
+		$$("#f_register").find("input,textarea,select,:radio").attr('disabled',true);
+		var output = {}, inputs = $$("#f_register").find("input,textarea,select,:radio").filter("[name]");
 		$.map(inputs, function(n, i){
 			output[n.name] = $.trim($(n).val());
 		});
 		output.password = secure('hns'+output.password);
-		$.post(aC.ajaxurl, {action:"register",form:output,apikey:aC.apikey}, function(response){
+		$.post(hns.ajaxurl, {action:"register",form:output,apikey:hns.apikey}, function(response){
 			if (stringToBoolean(response.logged)) {
-				aC.logged = true; aC.loggedIn();
-			} else $("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
+				hns.logged = true; hns.loggedIn();
+			} else $$("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
 		});
 	});
-	$("#b_login").live('click',function(){
-		$("#login").show();
-		$("#register").hide();
-		$("#hnsuser").center();
+	$$("#b_login").live('click',function(){
+		$$("#login").show();
+		$$("#register").hide();
+		$("#hns").center();
 	});
-	$(".logout-link").live('click',function(){
-		aC.logout();
+	$$(".logout-link").live('click',function(){
+		hns.logout();
+	});
+},
+expose: function(){
+	$w.HNS = {};
+	$.each(hns.visible,function(i,v){
+		$w.HNS[v] = hns[v];
 	});
 }
 };
 
-$($d.documentElement).keydown($w.aC.onKeyDown);
-$($d).ready($w.aC.init);
+$($d).find('.hns').keydown(hns.onKeyDown).end().ready(hns.expose);
 
 return true;
 }

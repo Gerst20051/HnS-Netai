@@ -79,6 +79,7 @@ dom: function(){
 		target.find('#name').val(contact.name);
 		target.find('#phone').val(contact.phone);
 		target.find('#email').val(contact.email);
+		return false;
 	});
 	$("ul#contacts li .delete").live('click',function(){
 		var target = $(this).parents('li');

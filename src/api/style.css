@@ -2,6 +2,12 @@
 
 .hns.lightbox {
 background-color:#999;
+background-image:linear-gradient(bottom,#bdbdbd 22%,#999 50%,#bdbdbd 100%);
+background-image:-o-linear-gradient(bottom,#bdbdbd 22%,#999 50%,#bdbdbd 100%);
+background-image:-moz-linear-gradient(bottom,#bdbdbd 22%,#999 50%,#bdbdbd 100%);
+background-image:-ms-linear-gradient(bottom,#bdbdbd 22%,#999 50%,#bdbdbd 100%);
+background-image:-webkit-linear-gradient(bottom,#bdbdbd 22%,#999 50%,#bdbdbd 100%);
+background-image:-webkit-gradient(linear,left bottom,left top,color-stop(0.22,#bdbdbd),color-stop(0.5,#999),color-stop(1,#bdbdbd));
 height:100%;
 left:0;
 opacity:.95;
@@ -12,42 +18,48 @@ width:100%;
 z-index:100;
 }
 
-#hnsuser.modal {
+#hns.modal {
 background:#ccc;
 border:solid 2px #fff;
+border-radius:8px;
+-moz-border-radius:8px;
+-webkit-border-radius:8px;
+box-shadow:#666 0 2px 3px;
+-moz-box-shadow:#666 0 2px 3px;
+-webkit-box-shadow:#666 0 2px 3px;
 padding:10px;
 z-index:200;
 }
 
-#hnsuser #register {
+#hns #register {
 display:none;
 }
 
-#hnsuser #login > header,#hnsuser #register > header {
+#hns #login > header,#hns #register > header {
 font-weight:bold;
 margin:10px;
 padding-bottom:12px;
 text-align:center;
 }
 
-#hnsuser #f_login > div,#hnsuser #f_register > div {
+#hns #f_login > div,#hns #f_register > div {
 margin:10px;
 }
 
-#hnsuser label {
+#hns label {
 display:inline-block;
 width:7em;
 }
 
-#hnsuser input:disabled,#hnsuser textarea:disabled {
+#hns input:disabled,#hns textarea:disabled {
 background-color:#ebebe4;
 }
 
-#hnsuser input[type="text"],#hnsuser input[type="password"],#hnsuser input[type="email"] {
+#hns input[type="text"],#hns input[type="password"],#hns input[type="email"] {
 width:300px;
 }
 
-#hnsuser #f_login input,#hnsuser #f_register input,#hnsuser #f_register select,#hnsuser .buttonTools input {
+#hns #f_login input,#hns #f_register input,#hns #f_register select,#hns .buttonTools input {
 background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#fff));
 background-image:-moz-linear-gradient(top,#fff,#fff);
 border:1px solid #717171;
@@ -71,26 +83,26 @@ padding:5px;
 text-shadow:0 1px 0 #666;
 }
 
-#hnsuser #f_login input:focus,#hnsuser #f_register input:focus {
+#hns #f_login input:focus,#hns #f_register input:focus {
 box-shadow:0 0 5px #007eff;
 -khtml-box-shadow:0 0 5px #007eff;
 -moz-box-shadow:0 0 5px #007eff;
 -webkit-box-shadow:0 0 5px #007eff;
 }
 
-#hnsuser #f_login input.error,#hnsuser #f_register input.error {
+#hns #f_login input.error,#hns #f_register input.error {
 box-shadow:0 0 5px #ff4848;
 -khtml-box-shadow:0 0 5px #ff4848;
 -moz-box-shadow:0 0 5px #ff4848;
 -webkit-box-shadow:0 0 5px #ff4848;
 }
 
-#hnsuser .buttonTools {
+#hns .buttonTools {
 height:30px;
 margin-top:5px;
 }
 
-#hnsuser .buttonTools ul.lfloat li:first-child input {
+#hns .buttonTools ul.lfloat li:first-child input {
 background-color:#4d90fe;
 background-image:linear-gradient(top,#4d90fe,#4787ed);
 background-image:-o-linear-gradient(top,#4d90fe,#4787ed);
@@ -101,7 +113,7 @@ border:1px solid #3079ed;
 color:#fff;
 }
 
-#hnsuser .buttonTools ul.rfloat li:last-child input {
+#hns .buttonTools ul.rfloat li:last-child input {
 background-color:#3d9400;
 background-image:linear-gradient(top,#3d9400,#398a00);
 background-image:-o-linear-gradient(top,#3d9400,#398a00);
@@ -117,19 +129,19 @@ opacity:0.5;
 -moz-opacity:0.5;
 }
 
-#hnsuser .buttonTools ul li {
+#hns .buttonTools ul li {
 float:left;
 }
 
-#hnsuser .buttonTools ul li:not(:first-child) {
+#hns .buttonTools ul li:not(:first-child) {
 margin-left:5px;
 }
 
-#hnsuser .buttonTools label {
+#hns .buttonTools label {
 display:block;
 width:0;
 }
 
-#hnsuser .buttonTools input {
+#hns .buttonTools input {
 cursor:pointer;
 }

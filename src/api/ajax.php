@@ -119,85 +119,82 @@ if ($ACTION == 'login') {
 }
 break;
 case 'GET':
-if ($ACTION == 'logged') {
-	if (isset($_SESSION['logged'])) print_json(array('logged'=>true),true);
-	else print_json(array('logged'=>false),true);
-} elseif ($ACTION == 'hnsuser') {
-?>
-<div class="hns lightbox">
-<div id="hnsuser" class="modal">
-<div id="login">
-<header>Login using Homenet Spaces</header>
-<form id="f_login" onsubmit="return false">
-<input type="hidden" name="formname" value="login"/>
-<div><label for="lusername">Username:</label><input id="lusername" name="username" type="text" value=""/></div>
-<div><label for="lpassword">Password:</label><input id="lpassword" name="password" type="password" value=""/></div>
-<div class="buttonTools">
-<ul class="toolList rfloat">
-<li class="listItem"><label class="loginButton" for="b_login_splash"><input id="b_login_splash" value="Login" type="submit"/></label></li>
-<li class="listItem"><label class="registerButton" for="b_register_splash"><input id="b_register_splash" value="Register" type="button"/></label></li>
-</ul>
-</div>
-</form>
-</div>
-<div id="register">
-<header>Register for Homenet Spaces</header>
-<form id="f_register" onsubmit="return false">
-<input type="hidden" name="formname" value="register"/>
-<div><label for="reg_username">Username:</label><input id="reg_username" name="username" type="text" value=""/></div>
-<div><label for="reg_password">Password:</label><input id="reg_password" name="password" type="password" value=""/></div>
-<div><label for="reg_name">Full Name:</label><input id="reg_name" name="name" type="text" value=""/></div>
-<div><label for="reg_email">Email:</label><input id="reg_email" name="email" type="email" value=""/></div>
-<div><label for="reg_city">Current City:</label><input id="reg_city" name="city" type="text" value=""/></div>
-<div><label for="reg_hometown">Hometown:</label><input id="reg_hometown" name="hometown" type="text" value=""/></div>
-<div>
-<label for="reg_gender">Gender:</label>
-<select id="reg_gender" name="gender">
-<option value="0"></option>
-<option value="male">Male</option>
-<option value="female">Female</option>
-</select> 
-</div>
-<div>
-<label for="reg_bmonth">Birth Date:</label>
-<select id="reg_bmonth" name="bmonth">
-<option value="0"></option>
-<option value="1">January</option>
-<option value="2">February</option>
-<option value="3">March</option>
-<option value="4">April</option>
-<option value="5">May</option>
-<option value="6">June</option>
-<option value="7">July</option>
-<option value="8">August</option>
-<option value="9">September</option>
-<option value="10">October</option>
-<option value="11">November</option>
-<option value="12">December</option>
-</select>
-<select id="reg_bday" name="bday"><option value="0"></option></select>
-<select id="reg_byear" name="byear"><option value="0"></option></select>
-</div>
-<div class="buttonTools">
-<ul class="toolList lfloat">
-<li class="listItem"><label class="loginButton" for="b_login"><input id="b_login" value="Login" type="submit"/></label></li>
-<li class="listItem"><label class="registerButton" for="b_register"><input id="b_register" value="Register" type="submit"/></label></li>
-</ul>
-</div>
-</form>
-</div>
-<script>
-(function(){
-var bday="",byear="",date=new Date();
-for (i=1;i<=31;i++){bday+="<option value=\""+i+"\">"+i+"</option>";}
-for (i=date.getFullYear();i>=1902;i--){byear+="<option value=\""+i+"\">"+i+"</option>";}
-$("#reg_bday").append(bday);
-$("#reg_byear").append(byear);
-})();
-</script>
-</div>
-</div>
-<?php
+if ($ACTION == 'init') {
+	$content = '<div class="hns lightbox">
+	<div id="hns" class="modal">
+	<div id="login">
+	<header>Login using Homenet Spaces</header>
+	<form id="f_login" onsubmit="return false">
+	<input type="hidden" name="formname" value="login"/>
+	<div><label for="lusername">Username:</label><input id="lusername" name="username" type="text" value=""/></div>
+	<div><label for="lpassword">Password:</label><input id="lpassword" name="password" type="password" value=""/></div>
+	<div class="buttonTools">
+	<ul class="toolList rfloat">
+	<li class="listItem"><label class="loginButton" for="b_login_splash"><input id="b_login_splash" value="Login" type="submit"/></label></li>
+	<li class="listItem"><label class="registerButton" for="b_register_splash"><input id="b_register_splash" value="Register" type="button"/></label></li>
+	</ul>
+	</div>
+	</form>
+	</div>
+	<div id="register">
+	<header>Register for Homenet Spaces</header>
+	<form id="f_register" onsubmit="return false">
+	<input type="hidden" name="formname" value="register"/>
+	<div><label for="reg_username">Username:</label><input id="reg_username" name="username" type="text" value=""/></div>
+	<div><label for="reg_password">Password:</label><input id="reg_password" name="password" type="password" value=""/></div>
+	<div><label for="reg_name">Full Name:</label><input id="reg_name" name="name" type="text" value=""/></div>
+	<div><label for="reg_email">Email:</label><input id="reg_email" name="email" type="email" value=""/></div>
+	<div><label for="reg_city">Current City:</label><input id="reg_city" name="city" type="text" value=""/></div>
+	<div><label for="reg_hometown">Hometown:</label><input id="reg_hometown" name="hometown" type="text" value=""/></div>
+	<div>
+	<label for="reg_gender">Gender:</label>
+	<select id="reg_gender" name="gender">
+	<option value="0"></option>
+	<option value="male">Male</option>
+	<option value="female">Female</option>
+	</select> 
+	</div>
+	<div>
+	<label for="reg_bmonth">Birth Date:</label>
+	<select id="reg_bmonth" name="bmonth">
+	<option value="0"></option>
+	<option value="1">January</option>
+	<option value="2">February</option>
+	<option value="3">March</option>
+	<option value="4">April</option>
+	<option value="5">May</option>
+	<option value="6">June</option>
+	<option value="7">July</option>
+	<option value="8">August</option>
+	<option value="9">September</option>
+	<option value="10">October</option>
+	<option value="11">November</option>
+	<option value="12">December</option>
+	</select>
+	<select id="reg_bday" name="bday"><option value="0"></option></select>
+	<select id="reg_byear" name="byear"><option value="0"></option></select>
+	</div>
+	<div class="buttonTools">
+	<ul class="toolList lfloat">
+	<li class="listItem"><label class="loginButton" for="b_login"><input id="b_login" value="Login" type="submit"/></label></li>
+	<li class="listItem"><label class="registerButton" for="b_register"><input id="b_register" value="Register" type="submit"/></label></li>
+	</ul>
+	</div>
+	</form>
+	</div>
+	<script>
+	(function(){
+	var bday="",byear="",date=new Date();
+	for (i=1;i<=31;i++){bday+="<option value=\""+i+"\">"+i+"</option>";}
+	for (i=date.getFullYear();i>=1902;i--){byear+="<option value=\""+i+"\">"+i+"</option>";}
+	$("#reg_bday").append(bday);
+	$("#reg_byear").append(byear);
+	})();
+	</script>
+	</div>
+	</div>';
+	if (isset($_SESSION['logged'])) print_json(array('logged'=>true,'html'=>$content),true);
+	else print_json(array('logged'=>false,'html'=>$content),true);
 } elseif ($ACTION == 'username') {
 	try {
 		$db = new MySQL();

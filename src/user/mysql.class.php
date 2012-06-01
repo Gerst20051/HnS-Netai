@@ -98,6 +98,7 @@ public function insert($table, $params) {
 }
 
 public function queryDebug() {
+	if (varcheck($query,true)) $this->query = $query;
 	return print_r($this->query);
 }
 

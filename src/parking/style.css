@@ -21,7 +21,7 @@ input,select {vertical-align:middle}
 legend{color:#000}
 ins{background-color:#ff9;color:#000;text-decoration:none}
 mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}
-del{text-decoration: line-through}
+del{text-decoration:line-through}
 abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}
 html,body{font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:1em;line-height:1.1}
 html{direction:ltr;text-align:left;overflow-x:hidden;overflow-y:scroll}

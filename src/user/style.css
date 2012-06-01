@@ -4,7 +4,7 @@
 background-color:#999;
 height:100%;
 left:0;
-opacity:.8;
+opacity:.95;
 position:absolute;
 top:0;
 visibility:hidden;
@@ -25,6 +25,7 @@ display:none;
 
 #login > header,#register > header {
 font-weight:bold;
+margin:10px;
 padding-bottom:12px;
 text-align:center;
 }

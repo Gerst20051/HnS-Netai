@@ -1,6 +1,96 @@
 <?php
-function error($msg,$json=false) {
+define('LOCAL',true);
+define('ROOT',dirname(__FILE__));
+define('DIR',(LOCAL)?dirname(ROOT):ROOT);
+
+function isint($mixed){
+	return (preg_match('/^\d*$/', $mixed) == 1);
+}
+
+function print_json($data,$die){
+	header('Content-Type: application/json; charset=utf8');
+	print_r(json_encode($data));
+	if ($die === true) die();
+}
+
+function error($msg,$json=false){
 	if ($json) print_r(json_encode(array("error"=>$msg)));
 	else $final['error'] = $msg;
+}
+
+function varcheck($var,$type,$rvalue,$rname){
+	if (func_num_args() == 1) {
+		if (isset($var) && !empty($var)) return $var;
+		else return '';
+	} else {
+		if ($type === true) {
+			if (isset($var) && !empty($var)) return true;
+			elseif (isset($rvalue) && !empty($rvalue)) {
+				if (isset($rname) && !empty($rname)) {
+					global ${strtoupper($rname)};
+					${strtoupper($rname)} = $rvalue;
+					return true;
+				} else return false;
+			} else return false;
+		} else {
+			if (isset($var) && !empty($var)) return $var;
+			else return '';
+		}
+	}
+}
+
+function setglobal($var){
+	if (varcheck($var,true)) {
+		foreach($var as $key=>$value) {
+			if (varcheck($value,true)) {
+				global ${strtoupper($key)};
+				${strtoupper($key)} = varcheck($value);
+			}
+		}
+		return true;
+	} else return false;
+}
+
+function validateinput($vars,$required){
+	foreach ($vars as $key=>$value) {
+		if (in_array($key,$required) && trim($value) == "") return false;
+	}
+	return true;
+}
+
+function logout(){
+	if (isset($_SESSION)) {
+		session_unset();
+		session_destroy();
+	}
+}
+
+function ucname($string){
+	$string = ucwords(strtolower($string));
+	foreach (array('-', '\'', 'Mc') as $delimiter) {
+		if (strpos($string,$delimiter) !== false) {
+			$string = implode($delimiter, array_map('ucfirst', explode($delimiter,$string)));
+		}
+	}
+	return $string;
+}
+
+/* Test Functions */
+
+function vname(&$var,$scope=false,$prefix='unique',$suffix='value'){
+	if ($scope) $vals = $scope; else $vals = $GLOBALS;
+	$old = $var;
+	$var = $new = $prefix.rand().$suffix;
+	$vname = false;
+	foreach ($vals as $key => $val) {
+		if ($val === $new) $vname = $key;
+	}
+	$var = $old;
+	return $vname;
+}
+
+function var_name(&$var, $scope=0){
+	$old = $var;
+	if (($key = array_search($var = 'unique'.rand().'value', !$scope ? $GLOBALS : $scope)) && $var = $old) return $key;  
 }
 ?>
