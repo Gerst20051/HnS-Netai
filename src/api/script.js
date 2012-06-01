@@ -22,30 +22,35 @@ init: function(){
 },
 go: function(args){
 	if (hns.loaded === false) {
-		if (args == "undefined") return;
+		if (!isDefined(args)) return false;
 		var options = ["apikey"];
 		for (var index in args) {
-			if ($.inArray(index,options)) hns[index] = args[index];
+			if ($.inArray(index,options) > -1) hns[index] = args[index];
 		}
 		hns.init();
 	}
 	if (hns.logged) hns.loggedIn();
 	else hns.loggedOut();
 },
-loggedIn: function(){
-	if (hns.logged === false) return;
+loggedIn: function(){alert("loggedin");
+	if (hns.logged === false) return false;
 	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
 			hns.user = response.user;
 			if (hns.user.middlename != "") hns.user.fullname = hns.user.firstname+' '+hns.user.middlename+' '+hns.user.lastname;
 			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
 			$("#hns").parent().css('visibility','hidden');
-		} else hns.logout();
+		} else {
+			hns.logout();
+			return false;
+		}
 	});
+	return true;
 },
-loggedOut: function(){
-	if (hns.logged === true) return;
+loggedOut: function(){alert("loggedout");
+	if (hns.logged === true) return false;
 	$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+	return true;
 },
 login: function(){
 	var e = false, username = $$("#lusername"), password = $$("#lpassword");
@@ -157,7 +162,7 @@ dom: function(){
 	$$("#b_login_splash").live('click',function(){
 		hns.login();
 	});
-	$$("#hns").find("#b_register_splash").live('click',function(){
+	$$("#b_register_splash").live('click',function(){
 		$$("#register").show();
 		$$("#login").hide();
 		$("#hns").center();

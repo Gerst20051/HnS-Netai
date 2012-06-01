@@ -97,9 +97,9 @@ public function insert($table, $params) {
 	$this->query('INSERT INTO `'.$table.'` (`'.implode('`,`', $keys).'`) VALUES (\''.implode('\',\'', $values).'\')');
 }
 
-public function queryDebug() {
-	if (varcheck($query,true)) $this->query = $query;
-	return print_r($this->query);
+public function queryDebug($query=false) {
+	if ($query === false) return print_r($this->query);
+	else return print_r($query);
 }
 
 public function resultDebug() {

@@ -39,10 +39,6 @@ display:inline-block;
 width:7em;
 }
 
-input:disabled,textarea:disabled {
-background-color:#ebebe4;
-}
-
 input[type="text"],input[type="password"],input[type="email"] {
 width:300px;
 }
@@ -130,6 +126,6 @@ display:block;
 width:0;
 }
 
-.buttonTools input {
+.buttonTools input:not(:disabled) {
 cursor:pointer;
 }

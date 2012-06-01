@@ -51,10 +51,6 @@ display:inline-block;
 width:7em;
 }
 
-#hns input:disabled,#hns textarea:disabled {
-background-color:#ebebe4;
-}
-
 #hns input[type="text"],#hns input[type="password"],#hns input[type="email"] {
 width:300px;
 }
@@ -142,6 +138,6 @@ display:block;
 width:0;
 }
 
-#hns .buttonTools input {
+#hns .buttonTools input:not(:disabled) {
 cursor:pointer;
 }

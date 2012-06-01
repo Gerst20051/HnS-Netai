@@ -46,6 +46,7 @@ th{font-weight:bold;text-align:center}
 caption{margin-bottom:.5em;text-align:center}
 p,fieldset,table{margin-bottom:1em}
 select,input,textarea,button{font:99% sans-serif}
+input:disabled,textarea:disabled{background-color:#ebebe4;cursor:default}
 pre,code,kbd,samp{font-family:monospace,sans-serif}
 a:link,a:visited{color:#3b5998;text-decoration:none}
 a:hover,a:active{outline:none;text-decoration:none}

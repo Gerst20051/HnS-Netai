@@ -46,6 +46,7 @@ body .hns,.hns select,.hns input,.hns textarea{color:#444}
 .hns caption{margin-bottom:.5em;text-align:center}
 .hns p,.hns fieldset,.hns table{margin-bottom:1em}
 .hns select,.hns input,.hns textarea,.hns button{font:99% sans-serif}
+.hns input:disabled,.hns textarea:disabled{background-color:#ebebe4;cursor:default}
 .hns pre,.hns code,.hns kbd,.hns samp{font-family:monospace,sans-serif}
 .hns a:link,.hns a:visited{color:#3b5998;text-decoration:none}
 .hns a:hover,.hns a:active{outline:none;text-decoration:none}
