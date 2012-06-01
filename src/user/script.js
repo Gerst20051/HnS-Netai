@@ -23,13 +23,13 @@ loggedIn: function(){
 			aC.user = response.user;
 			if (aC.user.middlename != "") aC.user.fullname = aC.user.firstname+' '+aC.user.middlename+' '+aC.user.lastname;
 			else aC.user.fullname = aC.user.firstname+' '+aC.user.lastname;
-			$(document.body).html('<div>Welcome '+aC.user.fullname+' | <span class="logout-link link">Logout</span></div>');
+			$($d.body).html('<div>Welcome '+aC.user.fullname+' | <span class="logout-link link">Logout</span></div>');
 		} else aC.logout();
 	});
 },
 loggedOut: function(){
 	$.get(aC.ajaxurl, {action:"hnsuser",apikey:aC.apikey}, function(response){
-		$(document.body).html(response).find('#hnsuser').center().parent().hide().css('visibility','visible').fadeIn('slow');
+		$($d.body).html(response).find('#hnsuser').center().parent().hide().css('visibility','visible').fadeIn('slow');
 	});
 },
 login: function(){
