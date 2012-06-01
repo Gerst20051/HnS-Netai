@@ -1,5 +1,6 @@
 <?php
 session_start();
+error_reporting(0);
 header('Access-Control-Allow-Origin: *');
 
 require_once 'functions.inc.php';
@@ -40,7 +41,8 @@ if ($ACTION == 'login') {
 			$_SESSION['firstname'] = $row['firstname'];
 			if (varcheck($row['middlename'],true)) $_SESSION['middlename'] = $row['middlename'];
 			$_SESSION['lastname'] = $row['lastname'];
-			if (varcheck($row['default_image'],true)) $_SESSION['default_image'] = $row['default_image'];
+			if (varcheck($row['images'],true)) $_SESSION['images'] = $row['images'];
+			// insert increment logins update script
 			print_json(array('logged'=>true),true);
 		} else print_json(array('logged'=>false),false);
 	} catch(Exception $e) {
@@ -55,7 +57,7 @@ if ($ACTION == 'login') {
 	if (!validateinput($VARS,$required)) print_json(array('logged'=>false),true);
 	extract($VARS);
 	if (empty($hometown)) $hometown = $city;
-	list($firstname, $middlename, $lastname) = split(' ',$name);
+	list($firstname, $middlename, $lastname) = split(' ',ucname($name));
 	if (!isset($lastname)) { $lastname = $middlename; $middlename = ''; }
 	try {
 		$db = new MySQL();
@@ -87,7 +89,7 @@ if ($ACTION == 'login') {
 			$_SESSION['username'] = $username;
 			$_SESSION['access_level'] = 1;
 			$_SESSION['last_login'] = date('Y-m-d');
-			if (isset($middlename) && !empty($middlename)) {
+			if (varcheck($middlename,true)) {
 				$_SESSION['fullname'] = $firstname . ' ' . $middlename . ' ' . $lastname;
 				$_SESSION['middlename'] = $middlename;
 			} else $_SESSION['fullname'] = $firstname . ' ' . $lastname;
@@ -198,7 +200,7 @@ $("#reg_byear").append(byear);
 	varcheck($UID,true,$_SESSION['user_id'],"uid");
 	try {
 		$db = new MySQL();
-		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.default_image FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$UID.' LIMIT 1');
+		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.images FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$UID.' LIMIT 1');
 		if ($db->numRows() == 1) {
 			header('Content-Type: application/json; charset=utf8');
 			print_json(array('user'=>$db->fetchAssocRow()));

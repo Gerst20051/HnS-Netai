@@ -1,10 +1,10 @@
-window.log = function(){
+$w.log = function(){
 	log.history = log.history || [];
 	log.history.push(arguments);
 	if (this.console) console.log(Array.prototype.slice.call(arguments));
 };
 
-window.keys = {
+$w.keys = {
 ALT: 18,
 BACKSPACE: 8,
 CAPS_LOCK: 20,
@@ -78,7 +78,7 @@ $.fn.pixels = function(property){
 };
 
 $.fn.center = function(){
-	var w = $(window);
+	var w = $($w);
 	return this.each(function(){
 		$(this).css("position","absolute");
 		$(this).css("top",((w.height() - $(this).height()) / 2) - (($(this).pixels('padding-top') + $(this).pixels('padding-bottom')) / 2) + w.scrollTop() + "px");
@@ -174,14 +174,14 @@ function doCallback(args){
 }
 
 function isDefined(variable){
-	return (typeof(window[variable]) == "undefined") ? false : true;
+	return (typeof($w[variable]) == "undefined") ? false : true;
 }
 
-function getHash(){ return decodeURIComponent(window.location.hash.substring(1)); }
-function clearHash(){ window.location.replace("#"); }
-function setHash(hash){ window.location.replace("#" + encodeURI(hash)); }
-function getTitle(){ return document.title; }
-function setTitle(title){ document.title = title; }
+function getHash(){ return decodeURIComponent($w.location.hash.substring(1)); }
+function clearHash(){ $w.location.replace("#"); }
+function setHash(hash){ $w.location.replace("#" + encodeURI(hash)); }
+function getTitle(){ return $d.title; }
+function setTitle(title){ $d.title = title; }
 
 function removeChars(needle, string){
 	if (typeof needle == "string") return string.split(needle).join('');
@@ -234,7 +234,7 @@ function array_map(callback){
 		while (k < argc) { tmp[m++] = argv[k++][i]; }
 		m = 0; k = 1;
 		if (callback) {
-			if (typeof callback === 'string') callback = this.window[callback];
+			if (typeof callback === 'string') callback = this.$w[callback];
 			tmp_ar[i++] = callback.apply(null, tmp);
 		} else tmp_ar[i++] = tmp;
 		tmp = [];
@@ -292,18 +292,18 @@ function isplit(string, regexp, flags){
 
 function IsRightButtonClicked(e){
 	var rightclick = false;
-	e = e || window.event;
+	e = e || $w.event;
 	if (e.which) rightclick = (e.which == 3);
 	else if (e.button) rightclick = (e.button == 2);
 	return rightclick;
 }
 
  function maxWindow() {
-	window.moveTo(0, 0);
-	if (document.all) top.window.resizeTo(screen.availWidth, screen.availHeight);
-	else if (document.layers || document.getElementById) {
-		if (top.window.outerHeight < screen.availHeight || top.window.outerWidth < screen.availWidth) {
-			top.window.outerHeight = screen.availHeight; top.window.outerWidth = screen.availWidth;
+	$w.moveTo(0, 0);
+	if ($d.all) top.$w.resizeTo(screen.availWidth, screen.availHeight);
+	else if ($d.layers || $d.getElementById) {
+		if (top.$w.outerHeight < screen.availHeight || top.$w.outerWidth < screen.availWidth) {
+			top.$w.outerHeight = screen.availHeight; top.$w.outerWidth = screen.availWidth;
 		}
 	}
 }
@@ -316,12 +316,12 @@ function extractHost(url) {
 
 function bustFrame() {
 	var blacklist = ['homenetspaces.tk','hnsdesktop.tk'];
-	if (top.location != window.location) {
-		var topURL = extractHost(document.referrer);
+	if (top.location != $w.location) {
+		var topURL = extractHost($d.referrer);
 		if (topURL) {
 			for (var i=0; i < blacklist.length; i++) {
 				if (topURL.indexOf(blacklist[i]) != -1) {
-					top.location.replace(window.location);
+					top.location.replace($w.location);
 					return;
 				}
 			}
@@ -334,11 +334,11 @@ function setCookie(name, value, expires, path, domain, secure) {
 	today.setTime(today.getTime());
 	if (expires) expires = (expires * 1000 * 60 * 60 * 24);
 	var expires_date = new Date(today.getTime() + expires);
-	document.cookie = name + "=" + escape(value) + (expires ? ";expires=" + expires_date.toGMTString() : "") + (path ? ";path=" + path : "") + (domain ? ";domain=" + domain : "") + (secure ? ";secure" : "");
+	$d.cookie = name + "=" + escape(value) + (expires ? ";expires=" + expires_date.toGMTString() : "") + (path ? ";path=" + path : "") + (domain ? ";domain=" + domain : "") + (secure ? ";secure" : "");
 }
 
 function getCookie(check_name) {
-	var a_all_cookies = document.cookie.split(';');
+	var a_all_cookies = $d.cookie.split(';');
 	var a_temp_cookie = '';
 	var cookie_name = '';
 	var cookie_value = '';
@@ -359,7 +359,7 @@ function getCookie(check_name) {
 }
 
 function deleteCookie(name, path, domain) {
-	if (getCookie(name)) document.cookie = name + "=" + (path ? ";path=" + path : "") + (domain ? ";domain=" + domain : "") + ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+	if (getCookie(name)) $d.cookie = name + "=" + (path ? ";path=" + path : "") + (domain ? ";domain=" + domain : "") + ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
 }
 
 Array.prototype.clear = function(){ this.splice(0,this.length); };
