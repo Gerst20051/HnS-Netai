@@ -102,6 +102,16 @@ function stringToBoolean(string){
 	}
 }
 
+function empty(mixed){
+	var key;
+	if (mixed === "" || mixed === 0 || mixed === "0" || mixed === null || mixed === false || typeof mixed === 'undefined') return true;
+	if (typeof mixed == 'object') {
+		for (key in mixed) return false;
+		return true;
+	}
+	return false;
+}
+
 function isDefined(variable){
 	return (typeof($w[variable]) === "undefined" && typeof(variable) === "undefined") ? false : true;
 }

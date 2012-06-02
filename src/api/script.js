@@ -5,35 +5,35 @@ var hns = {
 title: "HnS Netai API",
 ajaxurl: $host+"ajax.php",
 apikey: "",
+target: "",
 loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
 user: {},
-visible: ["logged","user","go","logout"],
-init: function(){
+visible: ["logged","user","init","go","login","logout"],
+options: ["apikey","target"],
+init: function(args){
 	if (hns.loaded !== false) return;
+	if (!isDefined(args)) return false;
+	for (var index in args) {
+		if ($.inArray(index,hns.options) > -1) hns[index] = args[index];
+	}
 	$.getJSON(hns.ajaxurl, {action:"init",apikey:hns.apikey}, function(response){
 		if (response.logged === true) hns.logged = true;
 		$($d.body).append(response.html);
 		hns.loaded = true;
 	});
+	if (!empty(hns.target)) hns.insert();
+	hns.expose();
 	hns.dom();
 },
-go: function(args){
-	if (hns.loaded === false) {
-		if (!isDefined(args)) return false;
-		var options = ["apikey"];
-		for (var index in args) {
-			if ($.inArray(index,options) > -1) hns[index] = args[index];
-		}
-		hns.init();
-	}
-	if (hns.logged) hns.loggedIn();
-	else hns.loggedOut();
+go: function(){
+	(hns.logged === true) ? hns.loggedIn() : hns.loggedOut();
 },
-loggedIn: function(){alert("loggedin");
+loggedIn: function(){log("loggedin");
 	if (hns.logged === false) return false;
+	log("loggedin-2");
 	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
 			hns.user = response.user;
@@ -41,18 +41,23 @@ loggedIn: function(){alert("loggedin");
 			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
 			$("#hns").parent().css('visibility','hidden');
 		} else {
-			hns.logout();
+			hns.dologout();
 			return false;
 		}
 	});
+	if ($.isFunction(HNS.loggedIn)) HNS.loggedIn();
+	hns.expose();
 	return true;
 },
-loggedOut: function(){alert("loggedout");
+loggedOut: function(){log("loggedout");
 	if (hns.logged === true) return false;
+	log("loggedout-2");
 	$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
+	hns.expose();
 	return true;
 },
-login: function(){
+dologin: function(){
 	var e = false, username = $$("#lusername"), password = $$("#lpassword");
 	if ($.trim(username.val()) == "") { username.addClass('error'); e = true; } else username.removeClass('error');
 	if ($.trim(password.val()) == "") { password.addClass('error'); e = true; } else password.removeClass('error');
@@ -74,7 +79,7 @@ login: function(){
 		});
 	}
 },
-logout: function(){
+dologout: function(){
 	$.post(hns.ajaxurl, {action:"logout",apikey:hns.apikey}, function(response){
 		if (!stringToBoolean(response.logged)) {
 			hns.logged = false;
@@ -82,6 +87,12 @@ logout: function(){
 			hns.loggedOut();
 		}
 	});
+},
+login: function(){
+	hns.dologin();
+},
+logout: function(){
+	hns.dologout();
 },
 regValidate: function(){
 	var e = false,
@@ -153,6 +164,16 @@ onKeyDown: function(e){
 		}
 	}
 },
+insert: function(){
+	var button = '<div class="hns"><div id="hnsbutton">HnS Login</div></div>';
+	$(hns.target).html(button);
+},
+expose: function(){
+	$w.HNS = $w.HNS || {};
+	$.each(hns.visible,function(i,v){
+		$w.HNS[v] = hns[v];
+	});
+},
 dom: function(){
 	$$("#lusername, #lpassword").live('focus',function(){
 		hns.loginFocus = true;
@@ -160,7 +181,7 @@ dom: function(){
 		hns.loginFocus = false;
 	});
 	$$("#b_login_splash").live('click',function(){
-		hns.login();
+		hns.dologin();
 	});
 	$$("#b_register_splash").live('click',function(){
 		$$("#register").show();
@@ -196,15 +217,6 @@ dom: function(){
 		$$("#login").show();
 		$$("#register").hide();
 		$("#hns").center();
-	});
-	$$(".logout-link").live('click',function(){
-		hns.logout();
-	});
-},
-expose: function(){
-	$w.HNS = {};
-	$.each(hns.visible,function(i,v){
-		$w.HNS[v] = hns[v];
 	});
 }
 };

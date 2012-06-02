@@ -5,7 +5,39 @@
 <meta name="description" content="Homenet Spaces Netai API">
 <link href="favicon.ico" rel="icon" type="image/x-icon">
 <script src="init.js"></script>
+<script>
+$("document").ready(function(){
+HNS.init({"apikey":"hnsapi","target":"#hns-login"});
+HNS.loggedIn = function(){
+	$("#in").show();
+	$("#out").hide();
+	alert("performing login");
+};
+HNS.loggedOut = function(){
+	$("#out").show();
+	$("#in").hide();
+	alert("performing logout");
+}
+$("#login-link").click(function(){
+	HNS.login();
+});
+$("#logout-link").click(function(){
+	HNS.logout();
+});
+});
+</script>
+<style>
+#in{display:none}
+</style>
 </head>
 <body>
+<div id="out">
+<div id="hns-login"></div>
+<a id="login-link" href="javascript:void(0)">Log In</a>
+</div>
+<div id="in">
+<a id="logout-link" href="javascript:void(0)">Log Out</a>
+<div id="content"></div>
+</div>
 </body>
 </html>
