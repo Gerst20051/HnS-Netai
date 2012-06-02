@@ -1,4 +1,5 @@
 /* HnS Base Stylesheet */
+.hns *{background-color:transparent}
 html .hns,body .hns{background:#fff;border:0;margin:0;padding:0;font-size:100%;vertical-align:baseline}
 .hns div,.hns span,.hns object,.hns iframe,.hns h1,.hns h2,.hns h3,.hns h4,.hns h5,.hns h6,.hns p,.hns blockquote,.hns pre,
 .hns abbr,.hns address,.hns cite,.hns code,.hns del,.hns dfn,.hns em,.hns img,.hns ins,.hns kbd,.hns q,.hns samp,.hns small,.hns strong,.hns sub,.hns sup,.hns var,.hns b,.hns i,.hns dl,.hns dt,.hns dd,.hns ol,.hns ul,.hns li,
