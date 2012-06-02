@@ -5,26 +5,27 @@ var hns = {
 title: "HnS Netai API",
 ajaxurl: $host+"ajax.php",
 apikey: "",
-target: "",
+logintarget: "#hns-login-button",
+logouttarget: "#hns-logout-button",
 loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
 user: {},
 visible: ["logged","user","init","go","login","logout"],
-options: ["apikey","target"],
+options: ["apikey","logintarget","logouttarget"],
 init: function(args){
 	if (hns.loaded !== false) return;
 	if (!isDefined(args)) return false;
 	for (var index in args) {
-		if ($.inArray(index,hns.options) > -1) hns[index] = args[index];
+		if ($.inArray(index,hns.options) > -1 && !empty(args[index])) hns[index] = args[index];
 	}
 	$.getJSON(hns.ajaxurl, {action:"init",apikey:hns.apikey}, function(response){
 		if (response.logged === true) hns.logged = true;
 		$($d.body).append(response.html);
 		hns.loaded = true;
 	});
-	if (!empty(hns.target)) hns.insert();
+	hns.insert();
 	hns.expose();
 	hns.dom();
 },
@@ -165,8 +166,14 @@ onKeyDown: function(e){
 	}
 },
 insert: function(){
-	var button = '<div class="hns"><div id="hnsbutton">HnS Login</div></div>';
-	$(hns.target).html(button);
+	if (!empty(hns.logintarget)) {
+		var button = '<div class="hns"><div id="hnslogin" class="hnsbutton"><button type="submit">HnS Login</button></div></div>';
+		$(hns.logintarget).html(button);
+	}
+	if (!empty(hns.logouttarget)) {
+		var button = '<div class="hns"><div id="hnslogout" class="hnsbutton"><button type="submit">HnS Logout</button></div></div>';
+		$(hns.logouttarget).html(button);
+	}
 },
 expose: function(){
 	$w.HNS = $w.HNS || {};
@@ -217,6 +224,13 @@ dom: function(){
 		$$("#login").show();
 		$$("#register").hide();
 		$("#hns").center();
+	});
+	$$("#hnslogin").click(function(){
+		hns.dologin();
+	});
+	
+	$$("#hnslogout").click(function(){
+		hns.dologout();
 	});
 }
 };
