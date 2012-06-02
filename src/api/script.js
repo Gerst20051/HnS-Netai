@@ -11,8 +11,9 @@ loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
+checkOverflow: true,
 user: {},
-visible: ["logged","user","init","go","login","logout"],
+visible: ["logged","user","init","login","logout"],
 options: ["apikey","logintarget","logouttarget"],
 init: function(args){
 	if (hns.loaded !== false) return;
@@ -28,19 +29,22 @@ init: function(args){
 	hns.insert();
 	hns.expose();
 	hns.dom();
+	if ($("body").css('overflow') == "hidden") hns.checkOverflow = false;
+	else hns.checkOverflow = $("body").css('overflow');
+	if (hns.logged === true) hns.go();
 },
 go: function(){
 	(hns.logged === true) ? hns.loggedIn() : hns.loggedOut();
 },
-loggedIn: function(){log("loggedin");
+loggedIn: function(){
 	if (hns.logged === false) return false;
-	log("loggedin-2");
 	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
 			hns.user = response.user;
 			if (hns.user.middlename != "") hns.user.fullname = hns.user.firstname+' '+hns.user.middlename+' '+hns.user.lastname;
 			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
-			$("#hns").parent().css('visibility','hidden');
+			$$("#hns").parent().css('visibility','hidden');
+			if (hns.checkOverflow !== false) hns.overflow('default');
 		} else {
 			hns.dologout();
 			return false;
@@ -50,10 +54,10 @@ loggedIn: function(){log("loggedin");
 	hns.expose();
 	return true;
 },
-loggedOut: function(){log("loggedout");
+loggedOut: function(){
 	if (hns.logged === true) return false;
-	log("loggedout-2");
-	$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+	$$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+	if (hns.checkOverflow !== false) hns.overflow('hidden');
 	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
 	hns.expose();
 	return true;
@@ -70,13 +74,12 @@ dologin: function(){
 		});
 		output.password = secure('hns'+output.password);
 		$.post(hns.ajaxurl, {action:"login",form:output,apikey:hns.apikey}, function(response){
+			$$("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
 			if (stringToBoolean(response.logged)) {
 				hns.logged = true;
 				hns.loggedIn();
 				$$("#f_login").clearForm();
-			}
-			$$("#f_login").clearForm();
-			$$("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
+			} else $$("#lpassword").val('');
 		});
 	}
 },
@@ -156,6 +159,13 @@ checkUsername: function(uname){
 		});
 	} else $$("#reg_username").addClass('error');
 },
+overflow: function(value){
+	if (hns.checkOverflow === false) return;
+	else {
+		if (value == "hidden") $("body").css('overflow','hidden');
+		else if (value == "default") $("body").css('overflow',hns.checkOverflow);
+	}
+},
 onKeyDown: function(e){
 	var keyCode = e.keyCode || e.which;
 	if (hns.logged === false) {
@@ -193,7 +203,7 @@ dom: function(){
 	$$("#b_register_splash").live('click',function(){
 		$$("#register").show();
 		$$("#login").hide();
-		$("#hns").center();
+		$$("#hns").center();
 	});
 	$$("#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city").live('focus',function(){
 		hns.registerFocus = true;
@@ -223,13 +233,13 @@ dom: function(){
 	$$("#b_login").live('click',function(){
 		$$("#login").show();
 		$$("#register").hide();
-		$("#hns").center();
+		$$("#hns").center();
 	});
-	$$("#hnslogin").click(function(){
-		hns.dologin();
+	$$("#hnslogin").live('click',function(){
+		hns.go();
 	});
 	
-	$$("#hnslogout").click(function(){
+	$$("#hnslogout").live('click',function(){
 		hns.dologout();
 	});
 }

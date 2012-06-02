@@ -11,19 +11,11 @@ HNS.init({"apikey":"hnsapi"});
 HNS.loggedIn = function(){
 	$("#in").show();
 	$("#out").hide();
-	alert("performing login");
 };
 HNS.loggedOut = function(){
 	$("#out").show();
 	$("#in").hide();
-	alert("performing logout");
 }
-$("#login-link").click(function(){
-	HNS.login();
-});
-$("#logout-link").click(function(){
-	HNS.logout();
-});
 });
 </script>
 <style>
@@ -75,13 +67,12 @@ $("#custom-logout-link").click(function(){
 
 HNS.init({"apikey":"yourapikey","logintarget":"#custom-login","logouttarget":".custom-logout"});
 </pre>
-
 </div>
 </div>
 <div id="in">
 <div id="hns-logout-button">HnS Logout</div>
 <div class="content">
-
+Use this page to register your app to use HnS Netai API.
 </div>
 </div>
 </body>
