@@ -93,7 +93,7 @@ dologout: function(){
 	});
 },
 login: function(){
-	hns.dologin();
+	hns.go();
 },
 logout: function(){
 	hns.dologout();
