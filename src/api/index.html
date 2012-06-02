@@ -36,13 +36,13 @@ HNS.init({"apikey":"yourapikey"});
 HNS.loggedIn = function(){
 	$("#in").show();
 	$("#out").hide();
-	alert("performing login");
+	log("performing login");
 };
 HNS.loggedOut = function(){
 	$("#out").show();
 	$("#in").hide();
-	alert("performing logout");
-}
+	log("performing logout");
+};
 </pre>
 <h3>// You can manually call the login and logout functions by the HNS.login and HNS.logout functions.</h3>
 <pre>
