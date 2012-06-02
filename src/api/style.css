@@ -52,7 +52,7 @@ width:7em;
 }
 
 #hns input[type="text"],#hns input[type="password"],#hns input[type="email"] {
-width:300px;
+width:250px;
 }
 
 #hns #f_login input,#hns #f_register input,#hns #f_register select,#hns .buttonTools input {
