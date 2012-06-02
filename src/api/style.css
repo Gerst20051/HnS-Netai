@@ -36,6 +36,7 @@ display:none;
 }
 
 #hns #login > header,#hns #register > header {
+cursor:default;
 font-weight:bold;
 margin:10px;
 padding-bottom:12px;

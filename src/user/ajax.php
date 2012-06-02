@@ -29,6 +29,16 @@ if ($ACTION == 'login') {
 	try {
 		$db = new MySQL();
 		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$username,substr(base64_decode($password),3)));
+		
+		/*
+		$data = "data";
+		print_json(array('query'=>array(
+			$db->queryDebug('UPDATE stream SET likes = likes+1 WHERE sid = '.$data),
+			$db->queryDebug('UPDATE stream SET data = \''.mysql_real_escape_string(addslashes($data)).'\' WHERE sid = '.$data),
+			$db->queryDebug('UPDATE stream SET likes = likes+1, ids = \''.json_encode($data).'\' WHERE sid = '.$data)
+		)));
+		*/
+		
 		if ($db->numRows() == 1) {
 			$row = $db->fetchAssocRow();
 			$_SESSION['logged'] = true;

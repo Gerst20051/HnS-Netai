@@ -77,7 +77,7 @@ dologin: function(){
 			$$("#f_login").find("input,textarea,select,:radio").attr('disabled',false);
 			if (stringToBoolean(response.logged)) {
 				hns.logged = true;
-				hns.loggedIn();
+				hns.go();
 				$$("#f_login").clearForm();
 			} else $$("#lpassword").val('');
 		});
@@ -88,7 +88,7 @@ dologout: function(){
 		if (!stringToBoolean(response.logged)) {
 			hns.logged = false;
 			hns.user = {};
-			hns.loggedOut();
+			hns.go();
 		}
 	});
 },
@@ -226,7 +226,8 @@ dom: function(){
 		output.password = secure('hns'+output.password);
 		$.post(hns.ajaxurl, {action:"register",form:output,apikey:hns.apikey}, function(response){
 			if (stringToBoolean(response.logged)) {
-				hns.logged = true; hns.loggedIn();
+				hns.logged = true;
+				hns.go();
 			} else $$("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
 		});
 	});
