@@ -31,16 +31,19 @@ init: function(args){
 	hns.dom();
 	if ($("body").css('overflow') == "hidden") hns.checkOverflow = false;
 	else hns.checkOverflow = $("body").css('overflow');
-	if (hns.logged === true) hns.go();
+	if (hns.logged === true) { log("logged so go"); hns.go(); }
+	log("hey");
 },
-go: function(){
+go: function(){log("go");
 	(hns.logged === true) ? hns.loggedIn() : hns.loggedOut();
 },
 loggedIn: function(){
 	if (hns.logged === false) return false;
 	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
+			log(response.user);
 			hns.user = response.user;
+			log(hns.user);
 			if (hns.user.middlename != "") hns.user.fullname = hns.user.firstname+' '+hns.user.middlename+' '+hns.user.lastname;
 			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
 			$$("#hns").parent().css('visibility','hidden');
@@ -50,16 +53,17 @@ loggedIn: function(){
 			return false;
 		}
 	});
-	if ($.isFunction(HNS.loggedIn)) HNS.loggedIn();
+	log(hns.user);
 	hns.expose();
+	if ($.isFunction(HNS.loggedIn)) HNS.loggedIn();
 	return true;
 },
 loggedOut: function(){
 	if (hns.logged === true) return false;
 	$$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
 	if (hns.checkOverflow !== false) hns.overflow('hidden');
-	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
 	hns.expose();
+	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
 	return true;
 },
 dologin: function(){

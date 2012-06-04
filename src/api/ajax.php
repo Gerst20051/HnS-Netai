@@ -22,9 +22,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
 case 'POST':
 if ($ACTION == 'login') {
 	$VARS = array_map('varcheck',$_REQ['form']);
-	if ($VARS['formname'] != 'login') print_json(array('logged'=>false),true);
+	if ($VARS['formname'] != 'login') print_json(array('logged'=>false));
 	else unset($VARS['formname']);
-	if (!validateinput($VARS,array('username','password'))) print_json(array('logged'=>false),true);
+	if (!validateinput($VARS,array('username','password'))) print_json(array('logged'=>false));
 	extract($VARS);
 	try {
 		$db = new MySQL();
@@ -53,18 +53,18 @@ if ($ACTION == 'login') {
 			$_SESSION['lastname'] = $row['lastname'];
 			if (varcheck($row['images'],true)) $_SESSION['images'] = $row['images'];
 			// insert increment logins script
-			print_json(array('logged'=>true),true);
-		} else print_json(array('logged'=>false),false);
+			print_json(array('logged'=>true));
+		} else print_json(array('logged'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
 		exit();
 	}
 } elseif ($ACTION == 'register') {
 	$VARS = array_map('varcheck',$_REQ['form']);
-	if ($VARS['formname'] != 'register') print_json(array('logged'=>false),true);
+	if ($VARS['formname'] != 'register') print_json(array('logged'=>false));
 	else unset($VARS['formname']);
 	$required = array('username','password','name','email','city','gender','bmonth','bday','byear');
-	if (!validateinput($VARS,$required)) print_json(array('logged'=>false),true);
+	if (!validateinput($VARS,$required)) print_json(array('logged'=>false));
 	extract($VARS);
 	if (empty($hometown)) $hometown = $city;
 	list($firstname, $middlename, $lastname) = split(' ',ucname($name));
@@ -105,15 +105,15 @@ if ($ACTION == 'login') {
 			} else $_SESSION['fullname'] = $firstname . ' ' . $lastname;
 			$_SESSION['firstname'] = $firstname;
 			$_SESSION['lastname'] = $lastname;
-			print_json(array('logged'=>true),true);
-		} else print_json(array('logged'=>false),true);
+			print_json(array('logged'=>true));
+		} else print_json(array('logged'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
 		exit();
 	}
 } elseif ($ACTION == 'logout') {
 	logout();
-	print_json(array('logged'=>false),true);
+	print_json(array('logged'=>false));
 }
 break;
 case 'GET':

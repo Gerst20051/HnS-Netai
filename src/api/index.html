@@ -67,6 +67,18 @@ $("#custom-logout-link").click(function(){
 
 HNS.init({"apikey":"yourapikey","logintarget":"#custom-login","logouttarget":".custom-logout"});
 </pre>
+<h3>// After the user has logged in you will be provided with data for the currently logged in user and/or possibly the info you request. I haven't figured out how I will represent images. It could be full path name, full image name, or just the image name. this will be an array and the first element in the array will be the default image. All user images will be stored in the same directory.</h3>
+<pre>
+HNS.user = {
+	user_id: "1",
+	username: "Andrew",
+	firstname: "Andrew",
+	middlename: "Anthony",
+	lastname: "Gerst",
+	fullname: "Andrew Anthony Gerst",
+	images: "["default_image","image2","image3"]"
+};
+</pre>
 </div>
 </div>
 <div id="in">

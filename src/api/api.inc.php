@@ -5,15 +5,15 @@ $APIKEY = varcheck($_REQUEST['apikey']);
 $ACTION = varcheck($_REQUEST['action']);
 if (!empty($REF) && !empty($APIKEY)) {
 	require_once 'auth.inc.php';
-	$allow = true;
+	$allow = false;
 	foreach($auth as $key => $referer) {
 		if ($APIKEY == $key && strpos($REF,$referer) !== false) { $allow = true; break; }
 	}
 	if (!$allow) {
-		if ($ACTION != "init") die(error("Bad API Key!",true));
+		if ($ACTION != "init") error("Bad API Key! - Key: $APIKEY");
 	}
 } else {
-	if (empty($APIKEY)) die(error("API Key Error!",true));
-	elseif (empty($REF)) die(error("HTTP Referer Error!",true));
+	if (empty($APIKEY)) error("API Key Error! - Key: $APIKEY");
+	elseif (empty($REF)) error("HTTP Referer Error! - Ref: $REF");
 }
 ?>

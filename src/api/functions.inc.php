@@ -7,33 +7,39 @@ function isint($mixed){
 	return (preg_match('/^\d*$/', $mixed) == 1);
 }
 
-function print_json($data,$die){
+function print_json($data,$die=true){
 	header('Content-Type: application/json; charset=utf8');
 	print_r(json_encode($data));
 	if ($die === true) die();
 }
 
-function error($msg,$json=false){
-	if ($json) print_r(json_encode(array("error"=>$msg)));
+function error($msg,$json=true,$die=true){
+	if ($json === true) print_r(json_encode(array("error"=>$msg)));
 	else $final['error'] = $msg;
+	if ($die === true) die();
+}
+
+function check($var){
+	if (isset($var) && !empty(trim($var))) return true;
+	else return false;
 }
 
 function varcheck($var,$type,$rvalue,$rname){
 	if (func_num_args() == 1) {
-		if (isset($var) && !empty($var)) return $var;
+		if (check($var)) return $var;
 		else return '';
 	} else {
 		if ($type === true) {
-			if (isset($var) && !empty($var)) return true;
-			elseif (isset($rvalue) && !empty($rvalue)) {
-				if (isset($rname) && !empty($rname)) {
+			if (check($var)) return true;
+			elseif (check($rvalue)) {
+				if (check($rname)) {
 					global ${strtoupper($rname)};
 					${strtoupper($rname)} = $rvalue;
 					return true;
 				} else return false;
 			} else return false;
 		} else {
-			if (isset($var) && !empty($var)) return $var;
+			if (check($var)) return $var;
 			else return '';
 		}
 	}
