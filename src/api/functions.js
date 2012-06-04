@@ -128,7 +128,7 @@ function setGUI(obj){
 						propVal = newVal;
 						$(target).text(propVal);
 					};
-				})(orig.target);
+				})(orig.target)
 			});
 		})();
 		obj[property] = orig.val;
