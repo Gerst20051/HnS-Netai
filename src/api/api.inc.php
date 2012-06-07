@@ -10,10 +10,10 @@ if (!empty($REF) && !empty($APIKEY)) {
 		if ($APIKEY == $key && strpos($REF,$referer) !== false) { $allow = true; break; }
 	}
 	if (!$allow) {
-		if ($ACTION != "init") error("Bad API Key! - Key: $APIKEY");
+		if ($ACTION != "init") error("Bad API Key! - Key:".$APIKEY);
 	}
 } else {
-	if (empty($APIKEY)) error("API Key Error! - Key: $APIKEY");
-	elseif (empty($REF)) error("HTTP Referer Error! - Ref: $REF");
+	if (empty($APIKEY)) error("API Key Error! - Key:".$APIKEY);
+	elseif (empty($REF)) error("HTTP Referer Error! - Ref:".$REF);
 }
 ?>
