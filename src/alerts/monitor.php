@@ -1,4 +1,8 @@
 <?php
+function init() {
+	include 'cod/index.php';
+}
+
 function check($host, $find) {
 	$fp = fsockopen($host, 80, $errno, $errstr, 10);
 	if (!$fp) echo "$errstr ($errno)\n";
@@ -15,11 +19,14 @@ function check($host, $find) {
 	}
 }
 
-function alert($host) {
-	mail('hnsalerts@gmail.com', 'Monitoring', $host.' down');
+function alertHost($host) {
+	$headers = 'From: alerts@hns.netai.net';
+	if (mail('hnsalerts@gmail.com', 'Monitoring', $host.' down', $headers)) {
+		echo 'Mail sent';
+	} else {
+		echo 'Mail not sent';
+	}
 }
 
-$host = 'www.catswhoblog.com';
-$find = 'Cats Who Code';
-if (!check($host, $find)) alert($host);
+init();
 ?>
