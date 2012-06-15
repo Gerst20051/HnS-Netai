@@ -23,8 +23,10 @@ foreach ($ips as $key => $ip) {
 	}
 }
 
-$header = array();
-$headers[] = 'Content-Transfer-Encoding: 7bit';
-$headers[] = 'From: alerts@hns.netai.net';
-mail('hnsalerts@gmail.com', 'CoD Server Status', $body, implode("\r\n", $headers));
+if (0 < strlen($body)) {
+	$header = array();
+	$headers[] = 'Content-Transfer-Encoding: 7bit';
+	$headers[] = 'From: alerts@hns.netai.net';
+	mail('hnsalerts@gmail.com', 'CoD Server Status', $body, implode("\r\n", $headers));
+}
 ?>
