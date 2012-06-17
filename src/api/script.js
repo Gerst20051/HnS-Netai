@@ -7,14 +7,16 @@ ajaxurl: $host+"ajax.php",
 apikey: "",
 logintarget: "#hns-login-button",
 logouttarget: "#hns-logout-button",
+logoutaction: false,
 loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
 checkOverflow: true,
+focused: false,
 user: {},
 visible: ["logged","user","init","login","logout"],
-options: ["apikey","logintarget","logouttarget"],
+options: ["apikey","logintarget","logouttarget","logoutaction"],
 init: function(args){
 	if (hns.loaded !== false) return;
 	if (!isDefined(args)) return false;
@@ -25,42 +27,40 @@ init: function(args){
 		if (response.logged === true) hns.logged = true;
 		$($d.body).append(response.html);
 		hns.loaded = true;
+		hns.insert();
+		hns.expose();
+		hns.dom();
+		if ($("body").css('overflow') == "hidden") hns.checkOverflow = false;
+		else hns.checkOverflow = $("body").css('overflow');
+		if (hns.logged === true || hns.logoutaction === true) hns.go();
 	});
-	hns.insert();
-	hns.expose();
-	hns.dom();
-	if ($("body").css('overflow') == "hidden") hns.checkOverflow = false;
-	else hns.checkOverflow = $("body").css('overflow');
-	if (hns.logged === true) { log("logged so go"); hns.go(); }
-	log("hey");
 },
-go: function(){log("go");
+go: function(){
 	(hns.logged === true) ? hns.loggedIn() : hns.loggedOut();
 },
 loggedIn: function(){
 	if (hns.logged === false) return false;
 	$.getJSON(hns.ajaxurl, {action:"userdata",apikey:hns.apikey}, function(response){
 		if (response.user !== false) {
-			log(response.user);
 			hns.user = response.user;
-			log(hns.user);
 			if (hns.user.middlename != "") hns.user.fullname = hns.user.firstname+' '+hns.user.middlename+' '+hns.user.lastname;
 			else hns.user.fullname = hns.user.firstname+' '+hns.user.lastname;
 			$$("#hns").parent().css('visibility','hidden');
 			if (hns.checkOverflow !== false) hns.overflow('default');
+			$("body").removeClass("hnsout").addClass("hnsin");
 		} else {
 			hns.dologout();
 			return false;
 		}
+		hns.expose();
+		if ($.isFunction(HNS.loggedIn)) HNS.loggedIn();
 	});
-	log(hns.user);
-	hns.expose();
-	if ($.isFunction(HNS.loggedIn)) HNS.loggedIn();
 	return true;
 },
 loggedOut: function(){
 	if (hns.logged === true) return false;
-	$$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+	hns.focused = true;
+	if (0 == arguments.length || hns.logoutaction === true) $$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
 	if (hns.checkOverflow !== false) hns.overflow('hidden');
 	hns.expose();
 	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
@@ -92,7 +92,8 @@ dologout: function(){
 		if (!stringToBoolean(response.logged)) {
 			hns.logged = false;
 			hns.user = {};
-			hns.go();
+			$("body").removeClass("hnsin").addClass("hnsout");
+			hns.loggedOut(true);
 		}
 	});
 },
@@ -171,11 +172,15 @@ overflow: function(value){
 	}
 },
 onKeyDown: function(e){
-	var keyCode = e.keyCode || e.which;
 	if (hns.logged === false) {
-		if (keyCode == keys.ENTER) {
+		if (e.which == keys.ENTER) {
 			if (hns.loginFocus) $$("#b_login_splash").click();
 			else if (hns.registerFocus) $$("#b_register").click();
+		} else if (e.which == keys.ESCAPE) {
+			if (hns.logoutaction === false) {
+				if (hns.focused) $$("#hns").parent().css('visibility','hidden');
+				if (hns.checkOverflow !== false) hns.overflow('default');
+			}
 		}
 	}
 },
@@ -250,7 +255,7 @@ dom: function(){
 }
 };
 
-$($d).find('.hns').keydown(hns.onKeyDown).end().ready(hns.expose);
+$($d).keydown(hns.onKeyDown).ready(hns.expose);
 
 return true;
 }

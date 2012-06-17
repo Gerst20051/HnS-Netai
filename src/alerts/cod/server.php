@@ -83,6 +83,7 @@ class COD4ServerStatus {
 			}
 		}
 
+		$this -> serverData['servername'] = $this -> serverData['sv_hostname'];
 		$this -> serverData['sv_hostname'] = $this -> colorCode($this -> serverData['sv_hostname']);
 		// if (isset($this -> serverData['_Maps'])) $this -> serverData['_Maps'] = explode('-', $this -> serverData['_Maps']);
 

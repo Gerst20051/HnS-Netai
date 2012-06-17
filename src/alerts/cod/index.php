@@ -9,8 +9,10 @@ $ips = array(
 );
 
 $body = "";
+$servers = array();
 
 foreach ($ips as $key => $ip) {
+	$server = array();
 	$status = new COD4ServerStatus($ip,'28960');
 	if ($status->getServerStatus()) {
 		$status->parseServerData();
@@ -18,15 +20,20 @@ foreach ($ips as $key => $ip) {
 		$players = $status->returnPlayers();
 		$body .= "Server: ".$serverStatus['sv_hostname']."\r\n";
 		foreach ($players as $i => $v) {
+			array_push($server,$v);
 			$body .= " - ".$players[$i]."\r\n";
 		}
+		if (0 < count($players)) $servers[$serverStatus['servername']] = $server;
 	}
 }
+
+print_r(json_encode($servers));
+//echo $body;
 
 if (0 < strlen($body)) {
 	$header = array();
 	$headers[] = 'Content-Transfer-Encoding: 7bit';
 	$headers[] = 'From: alerts@hns.netai.net';
-	mail('hnsalerts@gmail.com', 'CoD Server Status', $body, implode("\r\n", $headers));
+	//mail('hnsalerts@gmail.com', 'CoD Server Status', $body, implode("\r\n", $headers));
 }
 ?>

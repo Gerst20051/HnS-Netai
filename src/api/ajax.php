@@ -1,6 +1,5 @@
 <?php
 session_start();
-error_reporting(0);
 header('Access-Control-Allow-Origin: *');
 
 require_once 'functions.inc.php';
@@ -118,7 +117,8 @@ if ($ACTION == 'login') {
 break;
 case 'GET':
 if ($ACTION == 'init') {
-	$content = '<div class="hns lightbox">
+$content = <<<CONTENT
+	<div class="hns lightbox">
 	<div id="hns" class="modal">
 	<div id="login">
 	<header>Login using Homenet Spaces</header>
@@ -190,7 +190,8 @@ if ($ACTION == 'init') {
 	})();
 	</script>
 	</div>
-	</div>';
+	</div>
+CONTENT;
 	if (isset($_SESSION['logged'])) print_json(array('logged'=>true,'html'=>$content),true);
 	else print_json(array('logged'=>false,'html'=>$content),true);
 } elseif ($ACTION == 'username') {

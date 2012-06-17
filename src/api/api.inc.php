@@ -5,7 +5,7 @@ $APIKEY = varcheck($_REQUEST['apikey']);
 $ACTION = varcheck($_REQUEST['action']);
 if (!empty($REF) && !empty($APIKEY)) {
 	require_once 'auth.inc.php';
-	$allow = false;
+	$allow = true;
 	foreach($auth as $key => $referer) {
 		if ($APIKEY == $key && strpos($REF,$referer) !== false) { $allow = true; break; }
 	}

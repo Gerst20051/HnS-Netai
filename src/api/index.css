@@ -1,0 +1,177 @@
+/* Begin Styles */
+
+body.hnsin {
+background-color:#272521;
+cursor:default;
+font-family:arial,verdana;
+user-select:none;
+-khtml-user-select:none;
+-moz-user-select:none;
+-webkit-user-select:none;
+}
+
+#hns-logout-button {
+left:10px;
+position:absolute;
+top:10px;
+}
+
+#in .content {
+margin:0 auto;
+width:650px;
+}
+
+#in .content > header {
+font-size:20pt;
+font-weight:bold;
+margin:20px;
+}
+
+#in .content > header .leftheading {
+color:#a39c82;
+}
+
+#in .content > header .rightheading {
+color:#fffbef;
+}
+
+#in article > header {
+background-color:#665f46;
+padding:20px;
+}
+
+#in article > header aside {
+cursor:pointer;
+float:right;
+font-size:18pt;
+font-weight:bold;
+margin-top:3px;
+}
+
+#in article > header aside .leftlogo {
+color:#a39c82;
+}
+
+#in article > header aside .rightlogo {
+color:#fffbef;
+}
+
+#in article > header aside:hover .leftlogo {
+color:#8f886c;
+}
+
+#in article > header label {
+color:#faf9ee;
+font-size:18pt;
+margin-right:6px;
+position:relative;
+top:4px;
+}
+
+#in article > header #appname {
+background-color:#877c5a;
+border:1px solid #8f886c;
+color:#fffdf6;
+font-size:14pt;
+outline:0;
+padding:4px 6px;
+}
+
+#in article > header #appname:focus,
+#in article > header #appname:hover {
+border:1px solid #a39c82;
+}
+
+#in ul#inputs {
+background-color:#363432;
+margin:0;
+padding:10px;
+}
+
+#in ul#inputs li {
+background-color:#252521;
+cursor:default;
+list-style:none;
+margin:10px;
+padding:10px;
+}
+
+#in ul#inputs li:not(:first-child) {
+margin-top:20px;
+}
+
+#in ul#inputs li label {
+color:#9d9a86;
+display:block;
+float:left;
+margin-right:6px;
+padding-top:4px;
+text-align:right;
+width:100px;
+}
+
+#in ul#inputs li label:after {
+content:": ";
+}
+
+#in ul#inputs li input {
+background-color:transparent;
+border:solid 1px transparent;
+color:#faf9f4;
+outline:0;
+padding:4px;
+-webkit-transition:border-color .2s;
+width:400px;
+}
+
+#in ul#inputs li input:hover,
+#in ul#inputs li input:focus {
+border:solid 1px #faf9f4;
+}
+
+#in #applist > header {
+background-color:#665f46;
+padding:20px;
+}
+
+#in #applist > header .heading {
+color:#faf9ee;
+font-size:18pt;
+margin-right:6px;
+position:relative;
+top:4px;
+}
+
+#in #applist ul#apps {
+background-color:#363432;
+margin:0;
+padding:10px;
+}
+
+#in #applist ul#apps li {
+background-color:#252521;
+cursor:default;
+list-style:none;
+margin:10px;
+padding:10px;
+}
+
+#in #applist ul#apps li:not(:first-child) {
+margin-top:20px;
+}
+
+#in #applist ul#apps li {
+color:#9d9a86;
+cursor:pointer;
+text-align:center;
+}
+
+#in #applist ul#apps li:hover {
+color:#fff;
+}
+
+#in footer {
+color:#b2adaa;
+font-size:10pt;
+margin:20px;
+}

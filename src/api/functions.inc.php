@@ -20,7 +20,7 @@ function error($msg,$json=true,$die=true){
 }
 
 function check($var){
-	if (isset($var) && !empty(trim($var))) return true;
+	if (isset($var) && !empty($var)) return true;
 	else return false;
 }
 
@@ -79,6 +79,10 @@ function ucname($string){
 		}
 	}
 	return $string;
+}
+
+function removeWhitespace($string) {
+	return preg_replace('/\s*/m', ' ', $string);
 }
 
 /* Test Functions */

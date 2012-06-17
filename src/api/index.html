@@ -31,19 +31,6 @@ HNS.loggedOut = function(){
 <pre>
 HNS.init({"apikey":"yourapikey"});
 </pre>
-<h3>// You can track and control your website based on the status of being logged in or logged out by using the functions HNS.loggedIn and HNS.loggedOut.</h3>
-<pre>
-HNS.loggedIn = function(){
-	$("#in").show();
-	$("#out").hide();
-	log("performing login");
-};
-HNS.loggedOut = function(){
-	$("#out").show();
-	$("#in").hide();
-	log("performing logout");
-};
-</pre>
 <h3>// You can manually call the login and logout functions by the HNS.login and HNS.logout functions.</h3>
 <pre>
 $("#custom-login-link").click(function(){
@@ -67,7 +54,11 @@ $("#custom-logout-link").click(function(){
 
 HNS.init({"apikey":"yourapikey","logintarget":"#custom-login","logouttarget":".custom-logout"});
 </pre>
-<h3>// After the user has logged in you will be provided with data for the currently logged in user and/or possibly the info you request. I haven't figured out how I will represent images. It could be full path name, full image name, or just the image name. this will be an array and the first element in the array will be the default image. All user images will be stored in the same directory.</h3>
+<h3>// Application behavior can be set via HNS.init as well such as the logout action. If you set logoutaction to true the login screen will be displayed whenever the user is logged out as well as immediately after the user logs out.</h3>
+<pre>
+HNS.init({"apikey":"yourapikey","logoutaction":true});
+</pre>
+<h3>// After the user has logged in you will be provided with data for the currently logged in user and/or possibly the info you request. I haven't figured out how I will represent images. It could be full path name, full image name, or just the image name. this will be an array and the first element in the array will be the default image. All user images will be stored in the same directory. All user data will be cleared when they are logout.</h3>
 <pre>
 HNS.user = {
 	user_id: "1",
@@ -76,7 +67,31 @@ HNS.user = {
 	middlename: "Anthony",
 	lastname: "Gerst",
 	fullname: "Andrew Anthony Gerst",
-	images: "["default_image","image2","image3"]"
+	images: "['default_image','image2','image3']"
+};
+</pre>
+<h3>// This will work fine on a website with any design but I recommend the following layout by splitting the design into both a logged in and logged out version especially if you are using html. This allows you to easily work with user accounts and displaying different view depending on logged in status. You handle the behavior using the HNS callback functions in the following manner. HNS API applys hnsin and hnsout classes to the body element that will let you style your website differently and specifically for logged in or logged out designs.</h3>
+<pre>
+&lt;style&gt;
+#out, #in { display: none }
+&lt;/style&gt;
+&lt;body&gt;
+&lt;div id="out"&gt;&lt;/div&gt;
+&lt;div id="in"&gt;&lt;/div&gt;
+&lt;/body&gt;
+</pre>
+<h3>// You can track and control your website based on the status of being logged in or logged out by using the functions HNS.loggedIn and HNS.loggedOut.</h3>
+<pre>
+HNS.loggedIn = function(){
+	$("#in").show();
+	$("#out").hide();
+	log("performing login");
+	alert("Hello "+HNS.user.fullname+" welcome to our website!");
+};
+HNS.loggedOut = function(){
+	$("#out").show();
+	$("#in").hide();
+	log("performing logout");
 };
 </pre>
 </div>
@@ -84,7 +99,33 @@ HNS.user = {
 <div id="in">
 <div id="hns-logout-button">HnS Logout</div>
 <div class="content">
-Use this page to register your app to use HnS Netai API.
+<header><span class="leftheading">hnsapi</span><span class="rightheading">registration</span></header>
+<article>
+<header>
+<div id="heading">
+<aside id="createcontact"><span class="leftlogo">submit</span><span class="rightlogo">app &#187;</span></aside>
+<label for="appname">App Name:</label><input id="appname" type="text" value=""/>
+</div>
+</header>
+<div id="content">
+<ul id="inputs">
+<li><label for="domains">domains</label><input id="domains" type="text" value=""/></li>
+<li><label for="appname">apikey</label><input id="appname" type="text" value=""/></li>
+</ul>
+<div id="applist">
+<header>
+<div class="heading">
+Existing Apps
+</div>
+</header>
+<ul id="apps">
+<li>App Name 1</li>
+<li>App Name 2</li>
+</ul>
+</div>
+</div>
+</article>
+<footer>Use this page to register your app to use HnS Netai API.</footer>.
 </div>
 </div>
 </body>

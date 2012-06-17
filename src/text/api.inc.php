@@ -8,9 +8,9 @@ if (!empty($REF) && !empty($APIKEY)){
 	foreach($auth as $key => $referer) {
 		if ($APIKEY == $key && strpos($REF,$referer) !== false) { $allow = true; break; }
 	}
-	if (!$allow) die(error("Bad API Key!",true));
+	if (!$allow) error("Bad API Key!",true);
 } else {
-	if (empty($APIKEY)) die(error("API Key Error!",true));
-	elseif (empty($REF)) die(error("HTTP Referer Error!",true));
+	if (empty($APIKEY)) error("API Key Error!",true);
+	elseif (empty($REF)) error("HTTP Referer Error!",true);
 }
 ?>
