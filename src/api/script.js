@@ -62,8 +62,10 @@ loggedIn: function(){
 loggedOut: function(){
 	if (hns.logged === true) return false;
 	hns.focused = true;
-	if (0 == arguments.length || hns.logoutaction === true) $$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
-	if (hns.checkOverflow !== false) hns.overflow('hidden');
+	if (0 == arguments.length || hns.logoutaction === true) {
+		$$("#hns").center().parent().hide().css('visibility','visible').fadeIn('slow');
+		 if (hns.checkOverflow !== false) hns.overflow('hidden');
+	} else if (hns.checkOverflow !== false) hns.overflow('default');
 	hns.expose();
 	if ($.isFunction(HNS.loggedOut)) HNS.loggedOut();
 	return true;
