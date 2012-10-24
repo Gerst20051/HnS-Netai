@@ -1,8 +1,4 @@
 <?php
-define('LOCAL',true);
-define('ROOT',dirname(__FILE__));
-define('DIR',(LOCAL)?dirname(ROOT):ROOT);
-
 function isint($mixed){
 	return (preg_match('/^\d*$/', $mixed) == 1);
 }

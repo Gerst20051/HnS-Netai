@@ -4,7 +4,9 @@
 <title>HnS Netai API</title>
 <meta name="description" content="Homenet Spaces Netai API">
 <link href="favicon.ico" rel="icon" type="image/x-icon">
+<link href="index.css" rel="stylesheet" type="text/css">
 <script src="init.js"></script>
+<script src="index.js"></script>
 <script>
 $("document").ready(function(){
 HNS.init({"apikey":"hnsapi"});
@@ -70,7 +72,7 @@ HNS.user = {
 	images: "['default_image','image2','image3']"
 };
 </pre>
-<h3>// This will work fine on a website with any design but I recommend the following layout by splitting the design into both a logged in and logged out version especially if you are using html. This allows you to easily work with user accounts and displaying different view depending on logged in status. You handle the behavior using the HNS callback functions in the following manner. HNS API applys hnsin and hnsout classes to the body element that will let you style your website differently and specifically for logged in or logged out designs.</h3>
+<h3>// This will work fine on a website with any design but I recommend the following layout by splitting the design into both a logged in and logged out version especially if you are using html. This allows you to easily work with user accounts and displaying different view depending on logged in status. You handle the behavior using the HNS callback functions in the following manner. HNS API applies hnsin and hnsout classes to the body element that will let you style your website differently and specifically for logged in or logged out designs.</h3>
 <pre>
 &lt;style&gt;
 #out, #in { display: none }
@@ -103,7 +105,7 @@ HNS.loggedOut = function(){
 <article>
 <header>
 <div id="heading">
-<aside id="createcontact"><span class="leftlogo">submit</span><span class="rightlogo">app &#187;</span></aside>
+<aside id="logoaction"><span class="leftlogo">submit</span><span class="rightlogo">app &#187;</span></aside>
 <label for="appname">App Name:</label><input id="appname" type="text" value=""/>
 </div>
 </header>

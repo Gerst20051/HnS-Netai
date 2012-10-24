@@ -177,7 +177,7 @@ function empty(mixed){
 }
 
 function isDefined(variable){
-	return (typeof($w[variable]) === "undefined" && typeof(variable) === "undefined") ? false : true;
+	return (typeof $w[variable] !== "undefined" || typeof variable !== "undefined") ? true : false;
 }
 
 function isMobile(){

@@ -18,12 +18,14 @@ user: {},
 visible: ["logged","user","init","login","logout"],
 options: ["apikey","logintarget","logouttarget","logoutaction"],
 init: function(args){
-	if (hns.loaded !== false) return;
+	//if (hns.loaded !== false) return;
 	if (!isDefined(args)) return false;
 	for (var index in args) {
 		if ($.inArray(index,hns.options) > -1 && !empty(args[index])) hns[index] = args[index];
 	}
+	log(hns.ajaxurl);
 	$.getJSON(hns.ajaxurl, {action:"init",apikey:hns.apikey}, function(response){
+		log(response);
 		if (response.logged === true) hns.logged = true;
 		$($d.body).append(response.html);
 		hns.loaded = true;
@@ -33,7 +35,9 @@ init: function(args){
 		if ($("body").css('overflow') == "hidden") hns.checkOverflow = false;
 		else hns.checkOverflow = $("body").css('overflow');
 		if (hns.logged === true || hns.logoutaction === true) hns.go();
+		if (!hns.logged && $.isFunction(HNS.loggedOut)) HNS.loggedOut();
 	});
+	return true;
 },
 go: function(){
 	(hns.logged === true) ? hns.loggedIn() : hns.loggedOut();
@@ -137,6 +141,7 @@ regValidate: function(){
 	return !e;
 },
 getLocation: function(query){
+	log("getLocation");
 	var location = "37.76999,-122.44696";
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position){
