@@ -29,6 +29,10 @@ font-weight:bold;
 margin:20px;
 }
 
+#main > header > span {
+cursor:pointer;
+}
+
 #main > header .leftheading {
 color:#a39c82;
 }
@@ -184,6 +188,21 @@ border:solid 1px #faf9f4;
 ul#quotes li textarea {
 height:180px;
 resize:none;
+}
+
+ul#quotes li .quotelist {
+color:white;
+padding:5px 20px 20px;
+word-wrap:break-word;
+}
+
+ul#quotes li .quotename {
+color:#a39c82;
+}
+
+ul#quotes li .quotequote {
+text-align:justify;
+text-justify:inter-word;
 }
 
 footer {

@@ -3,7 +3,7 @@ session_start();
 header('Access-Control-Allow-Origin: *');
 
 require_once 'functions.inc.php';
-//require_once 'api.inc.php';
+require_once 'api.inc.php';
 require_once 'mysql.class.php';
 
 if (!$con = mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD)) throw new Exception('Error connecting to the server');
@@ -73,21 +73,23 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 break;
 case 'POST':
 
-if (!empty($UID) && !empty($PID) && !empty($QUOTE) && !empty($TIMESTAMP) && !empty($TYPE)) {
+if (!empty($UID) && !empty($PID) && !empty($TYPE)) {
 	$type = (int)$TYPE;
-	$quote = json_encode($QUOTE);
 	try {
 		$db = new MySQL();
 		$db->query('SELECT * FROM `'.MYSQL_TABLE.'` WHERE id = '.$PID);
 		if ($type === 1) {
-			if (0 < $db->numRows()) {
-				$db->sfquery(array('UPDATE `%s` SET quote = "%s" WHERE id = %s',MYSQL_TABLE,$quote,$PID));
-			} else {
-				$db->insert(MYSQL_TABLE, array(
-					'owner_id'=>$UID,
-					'quote'=>$quote,
-					'timestamp'=>$TIMESTAMP
-				));
+			if (!empty($QUOTE) && !empty($TIMESTAMP)) {
+				$quote = json_encode($QUOTE);
+				if (0 < $db->numRows()) {
+					$db->sfquery(array('UPDATE `%s` SET quote = "%s" WHERE id = %s',MYSQL_TABLE,$quote,$PID));
+				} else {
+					$db->insert(MYSQL_TABLE, array(
+						'owner_id'=>$UID,
+						'quote'=>$quote,
+						'timestamp'=>$TIMESTAMP
+					));
+				}
 			}
 		} elseif ($type === 2) {
 			if (0 < $db->numRows()) {

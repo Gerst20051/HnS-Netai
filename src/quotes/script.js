@@ -13,6 +13,18 @@ function getTime(){
 	return Math.round(+new Date()/1000);
 }
 
+function getHash(){ return decodeURIComponent(window.location.hash.substring(1)); }
+function clearHash(){ window.location.replace("#"); }
+function setHash(hash){ window.location.replace("#" + encodeURI(hash)); }
+function parseHash(){
+	var queryString = {};
+	getHash().replace(
+	    new RegExp("([^?=&]+)(=([^&]*))?", "g"),
+	    function($0, $1, $2, $3) { queryString[$1] = $3; }
+	);
+	return queryString;
+}
+
 function main(){
 window.aC = {
 title: "HnS Quotes",
@@ -29,28 +41,78 @@ init: function(){
 		$("#hns-login-button").show();
 		$("#hns-logout-button").hide();
 	};
-	$.getJSON("ajax.php", {type:"user",apikey:"hnsapi"}, function(response){
-		if ($.isArray(response)) {
-			aC.quotes = response;
-			var quotes = "";
-			$.each(response, function(i,v){
-				console.log(v);
-				var quote = v.quote;
-				quotes += aC.addQuote(v.id,quote.name,quote.quote);
-			});
-			$("ul#quotes").html(quotes);
-		} else {
-			$("ul#quotes").html('<li class="empty">No Quotes</li>');
-		}
-	});
+	aC.handleHash();
 	aC.dom();
 },
+handleHash: function(){
+	if (getHash() == "all") {
+		$.getJSON("ajax.php", {type:"all",apikey:"hnsapi"}, function(response){
+			if ($.isArray(response)) {
+				aC.quotes = response;
+				var quotes = "";
+				$.each(response, function(i,v){
+					var quote = v.quote;
+					quotes += aC.listQuote(v.id,quote.name,quote.quote);
+				});
+				$("ul#quotes").html(quotes);
+			} else {
+				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+			}
+		});
+	} else if (getHash() == "user") {
+		$.getJSON("ajax.php", {type:"user",apikey:"hnsapi"}, function(response){
+			if ($.isArray(response)) {
+				aC.quotes = response;
+				var quotes = "";
+				$.each(response, function(i,v){
+					var quote = v.quote;
+					quotes += aC.listQuote(v.id,quote.name,quote.quote);
+				});
+				$("ul#quotes").html(quotes);
+			} else {
+				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+			}
+		});
+	} else if (parseHash().id) {
+		$.getJSON("ajax.php", {id:parseHash().id,apikey:"hnsapi"}, function(response){
+			if ($.isArray(response)) {
+				aC.quotes = response;
+				var quotes = "";
+				$.each(response, function(i,v){
+					var quote = v.quote;
+					quotes += aC.listQuote(v.id,quote.name,quote.quote);
+				});
+				$("ul#quotes").html(quotes);
+			} else {
+				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+			}
+		});
+	} else {
+		$.getJSON("ajax.php", {type:"user",apikey:"hnsapi"}, function(response){
+			if ($.isArray(response)) {
+				aC.quotes = response;
+				var quotes = "";
+				$.each(response, function(i,v){
+					var quote = v.quote;
+					quotes += aC.addQuote(v.id,quote.name,quote.quote);
+				});
+				$("ul#quotes").html(quotes);
+			} else {
+				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+			}
+		});
+	}
+},
 dom: function(){
+	$("#showall > span").live('click',function(){
+		setHash("all");
+		aC.handleHash();
+	});
 	$("article > header #search").live('keyup',function(){
 		aC.search.splice(0,this.length);
-		if (aC.quotes.length > 0){
+		if (0 < aC.quotes.length){
 			$.each(aC.quotes, function(i,v){
-				if (v.name.indexOf($(this).val()) > -1) aC.search.push(i);
+				if (-1 < v.name.indexOf($(this).val())) aC.search.push(i);
 			});
 			$.each(aC.search, function(i,v){
 				alert(v);
@@ -59,7 +121,7 @@ dom: function(){
 	});
 	$("article > header #logoaction").live('click',function(){
 		var name = $.trim($("article > header #search").val());
-		if (name.length == 0 || aC.search.length > 0) name = "";
+		if (name.length == 0 || 0 < aC.search.length) name = "";
 		else $("article > header #search").val('');
 		var len = aC.quotes.push({"name":name,"quote":""});
 		$("ul#quotes").prepend(aC.addQuote(len,name)).find("li:first").fadeIn().find("header").click();
@@ -133,6 +195,14 @@ addQuote: function(id,name,quote){
 	html += '<div class="details">';
 	html += '<div><label for="name">name</label><input id="name" type="text" value="'+name+'"/></div>';
 	html += '<div><label for="quote">quote</label><textarea id="quote">'+quote+'</textarea></div>';
+	html += '</div></li>';
+	return html;
+},
+listQuote: function(id,name,quote){
+	if (aC.quotes.length < 2) $("ul#quotes").find('.empty').remove();
+	var html = '<li id="quote-'+id+'"><div class="quotelist">';
+	html += '<div class="quotename"><h2>'+name+'</h2></div>';
+	html += '<div class="quotequote">"'+quote+'"</div>';
 	html += '</div></li>';
 	return html;
 }
