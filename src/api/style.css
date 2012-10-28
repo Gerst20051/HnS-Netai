@@ -136,7 +136,7 @@ margin-left:5px;
 
 #hns .buttonTools label {
 display:block;
-width:0;
+width:100%;
 }
 
 #hns .buttonTools input:not(:disabled) {

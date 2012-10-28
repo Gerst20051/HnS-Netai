@@ -1,7 +1,7 @@
 <?php
 $auth = array(
-	"hnsapi"=>"hns.netai.net",
-	"hnsapi"=>"agerst.webs.com",
-	"hnsapi"=>"localhost"
+	"hns.netai.net"=>"hnsapi",
+	"agerst.webs.com"=>"hnsapi",
+	"localhost"=>"hnsapi"
 );
 ?>

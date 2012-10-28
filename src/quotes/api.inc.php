@@ -1,16 +1,16 @@
 <?php
 require_once 'functions.inc.php';
-$REF = (isset($_SERVER['HTTP_REFERER']))?$_SERVER['HTTP_REFERER']:'';
-$APIKEY = (isset($_REQUEST['apikey']))?$_REQUEST['apikey']:'';
-if (!empty($REF) && !empty($APIKEY)){
+$REF = varcheck($_SERVER['HTTP_REFERER']);
+$APIKEY = varcheck($_REQUEST['apikey']);
+if (!empty($REF) && !empty($APIKEY)) {
 	require_once 'auth.inc.php';
 	$allow = false;
-	foreach($auth as $key => $referer) {
+	foreach($auth as $referer => $key) {
 		if ($APIKEY == $key && strpos($REF,$referer) !== false) { $allow = true; break; }
 	}
-	if (!$allow) die(error("Bad API Key!",true));
+	if (!$allow) error("Bad API Key! - Key: ".$APIKEY);
 } else {
-	if (empty($APIKEY)) die(error("API Key Error!",true));
-	elseif (empty($REF)) die(error("HTTP Referer Error!",true));
+	if (empty($APIKEY)) error("API Key Error! - Key: ".$APIKEY);
+	elseif (empty($REF)) error("HTTP Referer Error! - Ref: ".$REF);
 }
 ?>

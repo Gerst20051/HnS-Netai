@@ -28,17 +28,7 @@ if ($ACTION == 'login') {
 	extract($VARS);
 	try {
 		$db = new MySQL();
-		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$username,substr(base64_decode($password),3)));
-		
-		/*
-		$data = "data";
-		print_json(array('query'=>array(
-			$db->queryDebug('UPDATE stream SET likes = likes+1 WHERE sid = '.$data),
-			$db->queryDebug('UPDATE stream SET data = \''.mysql_real_escape_string(addslashes($data)).'\' WHERE sid = '.$data),
-			$db->queryDebug('UPDATE stream SET likes = likes+1, ids = \''.json_encode($data).'\' WHERE sid = '.$data)
-		)));
-		*/
-		
+		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$username,substr(base64_decode($password),3)));		
 		if ($db->numRows() == 1) {
 			$row = $db->fetchAssocRow();
 			$_SESSION['logged'] = true;
@@ -52,7 +42,9 @@ if ($ACTION == 'login') {
 			if (varcheck($row['middlename'],true)) $_SESSION['middlename'] = $row['middlename'];
 			$_SESSION['lastname'] = $row['lastname'];
 			if (varcheck($row['images'],true)) $_SESSION['images'] = $row['images'];
-			// insert increment logins script
+			$last_login = date('Y-m-d');
+			$logins = $row['logins']+1;
+			$db->sfquery(array('UPDATE `%s` SET last_login = "%s", logins = "%s" WHERE user_id = %s','login',$last_login,$logins,$_SESSION['user_id']));
 			print_json(array('logged'=>true));
 		} else print_json(array('logged'=>false));
 	} catch(Exception $e) {

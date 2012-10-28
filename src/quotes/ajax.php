@@ -2,6 +2,7 @@
 session_start();
 header('Access-Control-Allow-Origin: *');
 
+require_once 'config.inc.php';
 require_once 'functions.inc.php';
 require_once 'api.inc.php';
 require_once 'mysql.class.php';
