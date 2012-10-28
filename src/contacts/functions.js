@@ -174,7 +174,7 @@ function doCallback(args){
 }
 
 function isDefined(variable){
-	return (typeof(window[variable]) === "undefined") ? false : true;
+	return (typeof window[variable] !== "undefined" || typeof variable !== "undefined") ? true : false;
 }
 
 function getHash(){ return decodeURIComponent(window.location.hash.substring(1)); }
