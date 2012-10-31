@@ -8,15 +8,12 @@ Includes small projects I've worked on such as a text alert system that texts me
 
 [HnS Netai](http://hns.netai.net/) 
 
-Parking
 [Parking](http://hns.netai.net/parking/) 
 Multiuser Calculator
 
-Quotes
 [Quotes](http://hns.netai.net/quotes/)
 You can finally keep a record of all those inspirational quotes you keep forgetting about.
 
-Web Surprise
 [Web Surprise](http://hns.netai.net/websurprise/) 
 Random website submitter that loads submitted website for all other connected users.
 
