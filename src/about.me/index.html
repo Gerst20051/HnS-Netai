@@ -40,12 +40,26 @@
 <article class="cf">
 <div id="loggedin">
 <div class="content cf">
-<div id="nav">Hello -> <span class="addsite-link link">Add Site</span> | <span class="logout-link link">Logout</span></div>
+<div id="nav">Hello -> <span class="logout-link link">Logout</span></div>
 <div id="profilename"></div>
-<div id="profilelinklist">
-<span id="profilelink1" class="profilelink">
-
-</span>
+<div id="profilelinklist"></div>
+<div id="addnewpage">
+<header>Add New Page</header>
+<form id="f_addpage" class="coolform" onsubmit="return false" autocomplete="off">
+<div class="formcontainer">
+<input type="hidden" name="formname" value="addpage"/>
+<div><label for="name">Name:</label><input id="name" name="name" type="text" spellcheck="false" value=""/></div>
+<div><label for="url">URL:</label><input id="url" name="url" type="url" spellcheck="false" value=""/></div>
+</div>
+<div class="buttonTools">
+<ul class="toolList rfloat">
+<li class="listItem"><label class="addpageButton" for="b_addpage"><input id="b_addpage" value="Add This Page" type="submit"/></label></li>
+</ul>
+</div>
+</form>
+</div>
+<div id="profileactivities">
+Activities
 </div>
 </div>
 </div>
@@ -59,7 +73,7 @@
 <form id="f_login" class="coolform" onsubmit="return false" autocomplete="off">
 <div class="formcontainer">
 <input type="hidden" name="formname" value="login"/>
-<div><label for="lemail">Email:</label><input id="lemail" name="email" type="text" spellcheck="false" value=""/></div>
+<div><label for="lemail">Email:</label><input id="lemail" name="email" type="email" spellcheck="false" value=""/></div>
 <div><label for="lpassword">Password:</label><input id="lpassword" name="password" type="password" spellcheck="false" value=""/></div>
 </div>
 <div class="buttonTools">

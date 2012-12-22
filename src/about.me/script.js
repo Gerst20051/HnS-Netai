@@ -57,7 +57,7 @@ loggedIn: function(){
 		if (response.user !== false) {
 			self.user = response.user;
 			self.user.fullname = self.user.firstname+' '+self.user.lastname;
-			self.user.pages = JSON.parse(response.user.pages);
+			if (self.user.pages.length) self.user.pages = JSON.parse(response.user.pages);
 			$("#loggedin").show();
 			$("#loggedout").hide();
 			$("body").addClass("in").removeClass("out");
@@ -187,13 +187,26 @@ onKeyDown: function(e){
 displayMe: function(pageurl){
 	var pages = $("<div/>");
 	$("#profilename").text(this.user.fullname);
-	console.log(this.user.pages[0]);
 	$.each(this.user.pages, function(i,v){
-		$("<span/>", {
-			"class": "profilelink",
-			text: v.url
-		}).appendTo(pages);
+		var url = parseURL(v.url);
+		var span = $("<span/>", {
+			"class": "profilelink"
+		});
+		var image = $("<img/>", {
+			"class": "profilelinkimage",
+			src: getDomainIcon(url.host)
+		});
+		span.data('href', url.url);
+		span.append(image).appendTo(pages);
 	});
+	var span = $("<span/>", {
+		"class": "addpagelink"
+	});
+	var image = $("<img/>", {
+		"class": "profilelinkimage",
+		src: "plus.png"
+	});
+	span.append(image).appendTo(pages);
 	$("#profilelinklist").html(pages);
 },
 loadProfile: function(pageurl){
@@ -213,23 +226,23 @@ loadProfile: function(pageurl){
 	});
 },
 addPage: function(){
-	var self = this, e = false, $f_addpage = $("#f_addpage"), $name = f_addpage.find("#name"), $url = f_addpage.find("#url");
+	var self = this, e = false, $f_addpage = $("#f_addpage"), $name = $f_addpage.find("#name"), $url = $f_addpage.find("#url");
 	if (!$.trim($name.val()).length) { $name.addClass('error'); e = true; } else $name.removeClass('error');
 	if (!$.trim($url.val()).length) { $url.addClass('error'); e = true; } else $url.removeClass('error');
 	if (!e) {
-		f_addpage.find("input").attr('disabled',true);
-		var output = {}, inputs = f_addpage.find("input").filter("[name]");
+		$f_addpage.find("input").attr('disabled',true);
+		var output = {}, inputs = $f_addpage.find("input").filter("[name]");
 		$.map(inputs, function(n, i){
 			output[n.name] = $.trim($(n).val());
 		});
 		$.post(this.ajaxurl, {action:"addpage",form:output}, function(response){
-			f_addpage.find("input").attr('disabled',false);
+			$f_addpage.find("input").attr('disabled',false);
 			if (stringToBoolean(response.added)) {
-				f_addpage.find("#name, #url").removeClass('error');
-				f_addpage.find("#b_addpage").removeClass('error');
-				f_addpage.clearForm();
+				$f_addpage.find("#name, #url").removeClass('error');
+				$f_addpage.find("#b_addpage").removeClass('error');
+				$f_addpage.clearForm();
 			} else {
-				f_addpage.find("#b_addpage").addClass('error');
+				$f_addpage.find("#b_addpage").addClass('error');
 			}
 		});
 	}
@@ -267,12 +280,32 @@ dom: function(){
 		$("#login").show();
 		$("#register").hide();
 	});
-	$("#hd_home").on('click','#homelink', function(){
+	$("#hd_home").on('click','#homelink',function(){
 		$("#previewprofile").hide();
 		$("#splash").show();
 	});
-	$("#loggedin").on('click','.logout-link', function(){
+	$("#loggedin").on('click','.logout-link',function(){
 		self.logout();
+	});
+	$("#profilelinklist").on('click','.profilelink',function(){
+		var url = parseURL($(this).data('href')), link = url.url;
+		if (!url.scheme) {
+			if (!url.slash.length) link = "http://"+link;
+			else link = "http:"+link;
+		}
+		window.open(link);
+	});
+	$("#profilelinklist").on('click','.addpagelink',function(){
+		if ($("#addnewpage").is(":visible")) {
+			$("#addnewpage").hide();
+			$(".addpagelink").find("img").attr('src','plus.png');
+		} else {
+			$("#addnewpage").show();
+			$(".addpagelink").find("img").attr('src','minus.png');
+		}
+	});
+	$("#addnewpage").on('click','#b_addpage',function(){
+		self.addPage();
 	});
 }
 };

@@ -8,6 +8,9 @@ Includes small projects I've worked on such as a text alert system that texts me
 
 [HnS Netai](http://hns.netai.net/) 
 
+[about.me](http://hns.netai.net/about.me/) 
+about.me is your own personal page that showcases everything you do, all around the web!
+
 [Parking](http://hns.netai.net/parking/) 
 Multiuser Calculator
 
