@@ -240,6 +240,25 @@ function bind(fnThis, fn){
 	};
 }
 
+function parseURL(url){
+	var urlReg = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
+	var result = urlReg.exec(url);
+	return {
+		'url':result[0],
+		'scheme':result[1],
+		'slash':result[2],
+		'host':result[3],
+		'port':result[4],
+		'path':result[5],
+		'query':result[6],
+		'hash':result[7]
+	};
+}
+
+function getDomainIcon(domain){
+	return "http://www.google.com/s2/favicons?domain="+domain;
+}
+
 (function(){
 	window._gaq=[['_setAccount','UA-36970192-1'],['_trackPageview']];
 	var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;

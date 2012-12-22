@@ -57,6 +57,7 @@ loggedIn: function(){
 		if (response.user !== false) {
 			self.user = response.user;
 			self.user.fullname = self.user.firstname+' '+self.user.lastname;
+			self.user.pages = JSON.parse(response.user.pages);
 			$("#loggedin").show();
 			$("#loggedout").hide();
 			$("body").addClass("in").removeClass("out");
@@ -184,10 +185,14 @@ onKeyDown: function(e){
 	}
 },
 displayMe: function(pageurl){
-	var pages = "";
+	var pages = $("<div/>");
 	$("#profilename").text(this.user.fullname);
+	console.log(this.user.pages[0]);
 	$.each(this.user.pages, function(i,v){
-		pages += $("</span>").text("hey");
+		$("<span/>", {
+			"class": "profilelink",
+			text: v.url
+		}).appendTo(pages);
 	});
 	$("#profilelinklist").html(pages);
 },
