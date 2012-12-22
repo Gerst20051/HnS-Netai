@@ -1,0 +1,115 @@
+<!--
+ ::::::::  :::::::::  ::::::::::     ::: ::::::::::: :::::::::: :::::::::       :::::::::  :::   :::                               
+:+:    :+: :+:    :+: :+:          :+: :+:   :+:     :+:        :+:    :+:      :+:    :+: :+:   :+: :+:                           
++:+        +:+    +:+ +:+         +:+   +:+  +:+     +:+        +:+    +:+      +:+    +:+  +:+ +:+                                
++#+        +#++:++#:  +#++:++#   +#++:++#++: +#+     +#++:++#   +#+    +:+      +#++:++#+    +#++:                                 
++#+        +#+    +#+ +#+        +#+     +#+ +#+     +#+        +#+    +#+      +#+    +#+    +#+                                  
+#+#    #+# #+#    #+# #+#        #+#     #+# #+#     #+#        #+#    #+#      #+#    #+#    #+#    #+#                           
+ ########  ###    ### ########## ###     ### ###     ########## #########       #########     ###                                  
+                                                                                                                                   
+                                                                                                                                   
+                                                                                                                                   
+    :::     ::::    ::: :::::::::  :::::::::  :::::::::: :::       :::       ::::::::  :::::::::: :::::::::   :::::::: ::::::::::: 
+  :+: :+:   :+:+:   :+: :+:    :+: :+:    :+: :+:        :+:       :+:      :+:    :+: :+:        :+:    :+: :+:    :+:    :+:     
+ +:+   +:+  :+:+:+  +:+ +:+    +:+ +:+    +:+ +:+        +:+       +:+      +:+        +:+        +:+    +:+ +:+           +:+     
++#++:++#++: +#+ +:+ +#+ +#+    +:+ +#++:++#:  +#++:++#   +#+  +:+  +#+      :#:        +#++:++#   +#++:++#:  +#++:++#++    +#+     
++#+     +#+ +#+  +#+#+# +#+    +#+ +#+    +#+ +#+        +#+ +#+#+ +#+      +#+   +#+# +#+        +#+    +#+        +#+    +#+     
+#+#     #+# #+#   #+#+# #+#    #+# #+#    #+# #+#         #+#+# #+#+#       #+#    #+# #+#        #+#    #+# #+#    #+#    #+#     
+###     ### ###    #### #########  ###    ### ##########   ###   ###         ########  ########## ###    ###  ########     ###     
+-->
+<!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>about.me</title>
+<meta name="author" content="Homenet Spaces Andrew Gerst">
+<meta name="title" content="about.me">
+<meta name="description" content="about.me is your own personal page that showcases everything you do, all around the web!">
+<meta property="og:title" content="about.me">
+<meta property="og:type" content="website">
+<meta property="og:image" content="http://hns.netai.net/about.me/logo.png">
+<meta property="og:url" content="http://hns.netai.net/about.me/">
+<meta property="og:site_name" content="about.me">
+<meta property="fb:admins" content="637458869">
+<meta property="fb:app_id" content="293256887461003">
+<meta property="og:description" content="about.me is your own personal page that showcases everything you do, all around the web!">
+<link href="favicon.ico" rel="icon" type="image/x-icon">
+<script src="init.js"></script>
+</head>
+<body>
+<div id="main">
+<header id="hd_home"><span id="homelink"><span class="leftheading">about</span><span class="rightheading">me</span></span></header>
+<article class="cf">
+<div id="loggedin">
+<div class="content cf">
+<div id="nav">Hello -> <span class="addsite-link link">Add Site</span> | <span class="logout-link link">Logout</span></div>
+<div id="profilename"></div>
+<div id="profilelinklist">
+<span id="profilelink1" class="profilelink">
+
+</span>
+</div>
+</div>
+</div>
+<div id="loggedout">
+<div class="content cf">
+<div id="splash">
+<div id="authpanel">
+<div id="statement">A PERSONAL PAGE THAT'S ALL ABOUT YOU</div>
+<div id="login">
+<header>Login</header>
+<form id="f_login" class="coolform" onsubmit="return false" autocomplete="off">
+<div class="formcontainer">
+<input type="hidden" name="formname" value="login"/>
+<div><label for="lemail">Email:</label><input id="lemail" name="email" type="text" spellcheck="false" value=""/></div>
+<div><label for="lpassword">Password:</label><input id="lpassword" name="password" type="password" spellcheck="false" value=""/></div>
+</div>
+<div class="buttonTools">
+<ul class="toolList rfloat">
+<li class="listItem"><label class="loginButton" for="b_login_splash"><input id="b_login_splash" value="Login" type="submit"/></label></li>
+<li class="listItem"><label class="registerButton" for="b_register_splash"><input id="b_register_splash" value="Create Your Page" type="button"/></label></li>
+</ul>
+</div>
+</form>
+</div>
+<div id="register">
+<header>Register</header>
+<form id="f_register" class="coolform" onsubmit="return false" autocomplete="off">
+<div class="formcontainer">
+<input type="hidden" name="formname" value="register"/>
+<div><label for="reg_name">First and Last Name:</label><input id="reg_name" name="name" type="text" spellcheck="false" value=""/></div>
+<div><label for="reg_email">Email:</label><input id="reg_email" name="email" type="email" spellcheck="false" value=""/></div>
+<div><label for="reg_password">Password:</label><input id="reg_password" name="password" type="password" spellcheck="false" value=""/></div>
+<div><label for="reg_pageurl">Vanity URL (username):</label><input id="reg_pageurl" name="pageurl" type="text" spellcheck="false" value=""/></div>
+</div>
+<div class="buttonTools">
+<ul class="toolList lfloat">
+<li class="listItem"><label class="loginButton" for="b_login"><input id="b_login" value="Login" type="submit"/></label></li>
+<li class="listItem"><label class="registerButton" for="b_register"><input id="b_register" value="Create Your Page" type="submit"/></label></li>
+</ul>
+</div>
+</form>
+</div>
+</div>
+<div id="previewfeed">
+<header>showcase?</header>
+
+</div>
+</div>
+<div id="previewprofile">
+<div>Preview Profile</div>
+<div id="previewprofile_name"></div>
+<div id="previewprofile_linklist">
+<span id="previewlink1" class="previewlink">
+
+</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<footer>
+Homenet Spaces
+</footer>
+</div>
+<img class="logo" src="logo.png"/>
+</body>
+</html>
