@@ -8,7 +8,7 @@
 		g = window.navigator.userAgent,
 		h = g.indexOf("Firefox") !== -1 || g.indexOf("Opera") !== -1 ? true : false,
 		i = ["base.css","style.css"],
-		j = [/*"http://code.jquery.com/jquery.min.js",*/"functions.js","script.js"],
+		j = ["http://code.jquery.com/jquery.min.js","functions.js","script.js"],
 		head = document[f]("head")[0],
 		l = 0,
 		n,
