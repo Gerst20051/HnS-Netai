@@ -208,9 +208,9 @@ loadProfile: function(pageurl){
 	});
 },
 addPage: function(){
-	var self = this, e = false, $f_addpage = $("#f_addpost"), $po = f_addpage.find("#lemail"), $password = f_addpage.find("#lpassword");
-	if (!$.trim($email.val()).length) { $email.addClass('error'); e = true; } else $email.removeClass('error');
-	if (!$.trim($password.val()).length) { $password.addClass('error'); e = true; } else $password.removeClass('error');
+	var self = this, e = false, $f_addpage = $("#f_addpage"), $name = f_addpage.find("#name"), $url = f_addpage.find("#url");
+	if (!$.trim($name.val()).length) { $name.addClass('error'); e = true; } else $name.removeClass('error');
+	if (!$.trim($url.val()).length) { $url.addClass('error'); e = true; } else $url.removeClass('error');
 	if (!e) {
 		f_addpage.find("input").attr('disabled',true);
 		var output = {}, inputs = f_addpage.find("input").filter("[name]");
@@ -219,12 +219,12 @@ addPage: function(){
 		});
 		$.post(this.ajaxurl, {action:"addpage",form:output}, function(response){
 			f_addpage.find("input").attr('disabled',false);
-			if (stringToBoolean(response.logged)) {
-				f_addpage.find("#reg_name, #reg_email, #reg_password").removeClass('error');
-				f_addpage.find("#b_login_splash").removeClass('error');
+			if (stringToBoolean(response.added)) {
+				f_addpage.find("#name, #url").removeClass('error');
+				f_addpage.find("#b_addpage").removeClass('error');
 				f_addpage.clearForm();
 			} else {
-				f_addpage.find("#b_login_splash").addClass('error');
+				f_addpage.find("#b_addpage").addClass('error');
 			}
 		});
 	}

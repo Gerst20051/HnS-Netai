@@ -114,9 +114,11 @@ if ($ACTION == 'login') {
 		if ($db->numRows()) {
 			$row = $db->fetchAssocRow();
 			$pages = json_decode($row['pages']);
-			array_push($pages,$page)
-			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$pages,$_SESSION['user_id']));
-			print_json(array('added'=>true));
+			array_push($pages,$page);
+			$data = json_encode($pages);
+			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$data,$_SESSION['user_id']));
+			if ($db->affectedRows()) print_json(array('added'=>true));
+			else print_json(array('added'=>false));
 		} else print_json(array('added'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
@@ -129,27 +131,38 @@ if ($ACTION == 'login') {
 		if ($db->numRows()) {
 			$row = $db->fetchAssocRow();
 			$pages = json_decode($row['pages']);
-			$original_amount
+			$original_amount = count($pages);
 			array_splice($pages, $index, 1);
-			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$pages,$_SESSION['user_id']));
-			if () {
-				print_json(array('deleted'=>true));
-			}
+			$new_amount = count($pages);
+			$diff = $original_amount - $new_amount;
+			$data = json_encode($pages);
+			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$data,$_SESSION['user_id']));
+			if ($db->affectedRows() && $diff) print_json(array('deleted'=>true));
+			else print_json(array('deleted'=>false));
 		} else print_json(array('deleted'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
 		exit();
 	}
 } elseif ($ACTION == 'updatepage') {
+	$VARS = array_map('varcheck',$FORM);
+	if ($VARS['formname'] != 'updatepage') print_json(array('added'=>false));
+	else unset($VARS['formname']);
+	$required = array('index','name','url');
+	if (!validateinput($VARS,$required)) print_json(array('added'=>false));
+	extract($VARS);
+	$page = array("name"=>$name,"url"=>$url);
 	try {
 		$db = new MySQL();
 		$db->sfquery(array('SELECT pages FROM `%s` WHERE user_id = %s LIMIT 1',MYSQL_TABLE,$_SESSION['user_id']));
 		if ($db->numRows()) {
 			$row = $db->fetchAssocRow();
 			$pages = json_decode($row['pages']);
-			$data = $row;
+			$pages[$index] = $page;
+			$data = json_encode($pages);
 			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$data,$_SESSION['user_id']));
-			print_json(array('updated'=>true));
+			if ($db->affectedRows()) print_json(array('updated'=>true));
+			else print_json(array('updated'=>false));
 		} else print_json(array('updated'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
