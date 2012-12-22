@@ -13,8 +13,8 @@ function pbkdf2($password, $salt){
 function pbkdf2_real($algorithm, $password, $salt, $count, $key_length){
 	$algorithm = strtolower($algorithm);
 	if (!in_array($algorithm, hash_algos(), true)) die('PBKDF2 ERROR: Invalid hash algorithm.');
-	if($count < 0 || $key_length < 0) die('PBKDF2 ERROR: Invalid parameters.');
-	if($key_length > 4294967295) die('PBKDF2 ERROR: Derived key too long.');
+	if ($count < 0 || $key_length < 0) die('PBKDF2 ERROR: Invalid parameters.');
+	if ($key_length > 4294967295) die('PBKDF2 ERROR: Derived key too long.');
 
 	$hLen = strlen(hash($algorithm, "", true));
 	$numBlocks = (int) ceil((double) $key_length / $hLen);
