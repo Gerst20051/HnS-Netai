@@ -85,8 +85,7 @@ login: function(){
 		$.post(this.ajaxurl, {action:"login",form:output}, function(response){
 			$login.find("input").attr('disabled',false);
 			if (stringToBoolean(response.logged)) {
-				$login.find("#reg_name, #reg_email, #reg_password").removeClass('error');
-				$login.find("#b_login_splash").removeClass('error');
+				$login.find(".error").removeClass('error');
 				$("#f_register").clearForm();
 				$login.clearForm();
 				self.logged = true;
@@ -153,7 +152,7 @@ register: function(){
 	$.post(this.ajaxurl, {action:"register",form:output}, function(response){
 		$f_register.find("input").attr('disabled',false);
 		if (stringToBoolean(response.registered)) {
-			$f_register.find("#b_register").removeClass('error');
+			$f_register.find(".error").removeClass('error');
 			$f_register.clearForm();
 			self.logged = true;
 			self.registered();
@@ -184,20 +183,40 @@ onKeyDown: function(e){
 		}
 	}
 },
-displayMe: function(pageurl){
-	var pages = $("<div/>");
+loadCoverPhoto: function(){
+	var self = this;
+	$.getJSON(this.ajaxurl, {action:"coverphoto",pageurl:this.page.pageurl}, function(response){
+		if (response.coverphoto !== false) {
+			if (self.logged) {
+				$("#user_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
+			} else {
+				$("#preview_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
+			}
+		}
+	});
+},
+createLinkListItem: function(page){
+	var url = parseURL(page.url);
+	var span = $("<span/>", {
+		"class": "profilelink"
+	});
+	var image = $("<img/>", {
+		"class": "profilelinkimage",
+		src: getDomainIcon(url.host)
+	});
+	span.data('href', url.url);
+	return span.append(image);
+},
+displayMe: function(){
+	var self = this, pages = $("<div/>");
 	$("#profilename").text(this.user.fullname);
+	$.getJSON(this.ajaxurl, {action:"coverphoto",pageurl:this.user.pageurl}, function(response){
+		if (response.coverphoto !== false) {
+			$("#profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
+		}
+	});
 	$.each(this.user.pages, function(i,v){
-		var url = parseURL(v.url);
-		var span = $("<span/>", {
-			"class": "profilelink"
-		});
-		var image = $("<img/>", {
-			"class": "profilelinkimage",
-			src: getDomainIcon(url.host)
-		});
-		span.data('href', url.url);
-		span.append(image).appendTo(pages);
+		self.createLinkListItem(v).appendTo(pages);
 	});
 	var span = $("<span/>", {
 		"class": "addpagelink"
@@ -209,26 +228,52 @@ displayMe: function(pageurl){
 	span.append(image).appendTo(pages);
 	$("#profilelinklist").html(pages);
 },
+displayProfile: function(){
+	var self = this, pages = $("<div/>");
+	if (this.logged) {
+		$("#user_profilename").text(this.page.fullname);
+		if (this.page.pages.length) {
+			$.each(this.page.pages, function(i,v){
+				self.createLinkListItem(v).appendTo(pages);
+			});
+			$("#user_profilelinklist").html(pages);
+		}
+	} else {
+		$("#preview_profilename").text(this.page.fullname);
+		if (this.page.pages.length) {
+			$.each(this.page.pages, function(i,v){
+				self.createLinkListItem(v).appendTo(pages);
+			});
+			$("#preview_profilelinklist").html(pages);
+		}
+	}
+	this.loadCoverPhoto();
+},
 loadProfile: function(pageurl){
 	var self = this;
 	$.getJSON(this.ajaxurl, {action:"profile",pageurl:pageurl}, function(response){
 		if (response.user !== false) {
 			self.page = response.user;
 			self.page.fullname = self.page.firstname+' '+self.page.lastname;
-			if (this.logged === false) {
-				$("#previewprofile_name").text(response.page.fullname);
+			if (self.page.pages.length) self.page.pages = JSON.parse(response.user.pages);
+			if (self.logged === false) {
 				$("#splash").hide();
-				$("#previewprofile").show();
+				$("#preview_profile").show();
+				self.displayProfile();
 			} else {
-
+				$("#profile").hide();
+				$("#user_profile").show();
+				self.displayProfile();
 			}
 		}
 	});
 },
 addPage: function(){
-	var self = this, e = false, $f_addpage = $("#f_addpage"), $name = $f_addpage.find("#name"), $url = $f_addpage.find("#url");
-	if (!$.trim($name.val()).length) { $name.addClass('error'); e = true; } else $name.removeClass('error');
-	if (!$.trim($url.val()).length) { $url.addClass('error'); e = true; } else $url.removeClass('error');
+	var self = this, e = false, $f_addpage = $("#f_addpage"),
+		$name = $f_addpage.find("#name"), name_trim = $.trim($name.val()),
+		$url = $f_addpage.find("#url"), url_trim = $.trim($url.val());
+	if (!name_trim.length) { $name.addClass('error'); e = true; } else $name.removeClass('error');
+	if (!url_trim.length) { $url.addClass('error'); e = true; } else $url.removeClass('error');
 	if (!e) {
 		$f_addpage.find("input").attr('disabled',true);
 		var output = {}, inputs = $f_addpage.find("input").filter("[name]");
@@ -238,9 +283,11 @@ addPage: function(){
 		$.post(this.ajaxurl, {action:"addpage",form:output}, function(response){
 			$f_addpage.find("input").attr('disabled',false);
 			if (stringToBoolean(response.added)) {
-				$f_addpage.find("#name, #url").removeClass('error');
-				$f_addpage.find("#b_addpage").removeClass('error');
+				$f_addpage.find(".error").removeClass('error');
 				$f_addpage.clearForm();
+				$('.addpagelink').click();
+				var pageitem = {name:name_trim,url:url_trim};
+				self.createLinkListItem(pageitem).insertBefore($("#profilelinklist div span:last-child"));
 			} else {
 				$f_addpage.find("#b_addpage").addClass('error');
 			}
@@ -281,13 +328,18 @@ dom: function(){
 		$("#register").hide();
 	});
 	$("#hd_home").on('click','#homelink',function(){
-		$("#previewprofile").hide();
-		$("#splash").show();
+		if (self.logged === false) {
+			$("#preview_profile").hide();
+			$("#splash").show();
+		} else {
+			$("#user_profile").hide();
+			$("#profile").show();	
+		}
 	});
 	$("#loggedin").on('click','.logout-link',function(){
 		self.logout();
 	});
-	$("#profilelinklist").on('click','.profilelink',function(){
+	$("#profilelinklist, #user_profilelinklist, #preview_profilelinklist").on('click','.profilelink',function(){
 		var url = parseURL($(this).data('href')), link = url.url;
 		if (!url.scheme) {
 			if (!url.slash.length) link = "http://"+link;

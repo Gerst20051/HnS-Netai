@@ -113,9 +113,14 @@ if ($ACTION == 'login') {
 		$db->sfquery(array('SELECT pages FROM `%s` WHERE user_id = %s LIMIT 1',MYSQL_TABLE,$_SESSION['user_id']));
 		if ($db->numRows()) {
 			$row = $db->fetchAssocRow();
-			$pages = json_decode($row['pages']);
-			array_push($pages,$page);
-			$data = json_encode($pages);
+			$pages = $row['pages'];
+			if (strlen($pages)) {
+				$pages = json_decode($pages);
+				array_push($pages,$page);
+				$data = json_encode($pages);
+			} else {
+				$data = json_encode(array($page));
+			}
 			$db->sfquery(array('UPDATE `%s` SET pages = "%s" WHERE user_id = %s',MYSQL_TABLE,$data,$_SESSION['user_id']));
 			if ($db->affectedRows()) print_json(array('added'=>true));
 			else print_json(array('added'=>false));
@@ -174,7 +179,7 @@ case 'GET':
 if ($ACTION == 'logged') {
 	if (isset($_SESSION['logged'])) print_json(array('logged'=>true));
 	else print_json(array('logged'=>false));
-} elseif ($ACTION == 'checkemail') {
+} elseif ($ACTION == 'checkemail' && check($EMAIL)) {
 	try {
 		$db = new MySQL();
 		$db->sfquery(array('SELECT email FROM `%s` WHERE email = "%s" LIMIT 1',MYSQL_TABLE,$EMAIL));
@@ -196,7 +201,7 @@ if ($ACTION == 'logged') {
 		echo $e->getMessage();
 		exit();
 	}
-} elseif ($ACTION == 'profile') {
+} elseif ($ACTION == 'profile' && check($PAGEURL)) {
 	try {
 		$db = new MySQL();
 		$db->sfquery(array('SELECT %s FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_ALL,MYSQL_TABLE,$PAGEURL));
@@ -204,6 +209,63 @@ if ($ACTION == 'logged') {
 			$data = $db->fetchParsedRow();
 			print_json(array('user'=>$data));
 		} else print_json(array('user'=>false));
+	} catch(Exception $e) {
+		echo $e->getMessage();
+		exit();
+	}
+} elseif ($ACTION == 'coverphoto' && check($PAGEURL)) {
+	try {
+		$db = new MySQL();
+		$db->sfquery(array('SELECT pages FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$PAGEURL));
+		if ($db->numRows()) {
+			$row = $db->fetchParsedRow();
+			$pages = $row['pages'];
+			if (strlen($pages)) {
+				$pages = json_decode($pages);
+				foreach ($pages as $key => $value) {
+					$url = parseURL($value->url);
+					if (strpos($url['url'], 'facebook.com')) {
+						$fb_username = $url['path'];
+						break;
+					}
+				}
+				if (check($fb_username)) {
+					require_once 'api/facebook.inc.php';
+					$fb_data = $facebook->api('/'.$fb_username.'?fields=cover');
+					print_json(array('coverphoto'=>$fb_data["cover"]["source"]));
+				} else print_json(array('coverphoto'=>false));
+			} else print_json(array('coverphoto'=>false));
+		} else print_json(array('coverphoto'=>false));
+	} catch(Exception $e) {
+		echo $e->getMessage();
+		exit();
+	}
+} elseif ($ACTION == 'pictures' && check($PAGEURL)) {
+	try {
+		$db = new MySQL();
+		$db->sfquery(array('SELECT email, pages, pageurl FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$PAGEURL));
+		if ($db->numRows()) {
+			require_once 'pictures.inc.php';
+			$user = $db->fetchParsedRow();
+			$pictures = new UserPictures();
+			$data = $pictures->retrieve();
+			print_json(array('pictures'=>$data));
+		} else print_json(array('pictures'=>false));
+	} catch(Exception $e) {
+		echo $e->getMessage();
+		exit();
+	}
+} elseif ($ACTION == 'activities' && check($PAGEURL)) {
+	try {
+		$db = new MySQL();
+		$db->sfquery(array('SELECT email, pages, pageurl FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$PAGEURL));
+		if ($db->numRows()) {
+			require_once 'activities.inc.php';
+			$user = $db->fetchParsedRow();
+			$activities = new UserActivities();
+			$data = $activities->retrieve();
+			print_json(array('activities'=>$data));
+		} else print_json(array('activities'=>false));
 	} catch(Exception $e) {
 		echo $e->getMessage();
 		exit();

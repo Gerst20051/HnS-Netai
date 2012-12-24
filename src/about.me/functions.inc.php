@@ -80,4 +80,19 @@ function ucname($string){
 function removeWhitespace($string){
 	return preg_replace('/\s*/m', ' ', $string);
 }
+
+function parseURL($url){
+	$urlReg = '/^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/';
+	preg_match($urlReg,$url,$result);
+	return array(
+		'url'=>$result[0],
+		'scheme'=>$result[1],
+		'slash'=>$result[2],
+		'host'=>$result[3],
+		'port'=>$result[4],
+		'path'=>$result[5],
+		'query'=>$result[6],
+		'hash'=>$result[7]
+	);
+}
 ?>

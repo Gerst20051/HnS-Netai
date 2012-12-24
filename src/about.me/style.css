@@ -32,7 +32,7 @@ margin:20px 0;
 color:#a39c82;
 }
 
-.out #homelink {
+#homelink {
 cursor:pointer;
 }
 
@@ -45,14 +45,42 @@ margin:0;
 padding:30px;
 }
 
-#profilename {
+#profilename,
+#user_profilename,
+#preview_profilename {
 font-size:38pt;
 font-weight:900;
 margin-bottom:25px;
 text-align:center;
 }
 
-#profilelinklist {
+#preview_profilename {
+padding-top:25px;
+}
+
+#profilecover,
+#user_profilecover,
+#preview_profilecover {
+display:none;
+height:315px;
+margin-bottom:25px;
+overflow:hidden;
+position:relative;
+}
+
+.coverphoto {
+left:0;
+min-height:100%;
+min-width:100%;
+position:absolute;
+top:0;
+width:100%;
+}
+
+#profilelinklist,
+#user_profilelinklist,
+#preview_profilelinklist {
+margin-right:8px;
 text-align:center;
 }
 
@@ -86,7 +114,7 @@ background-color:rgba(0, 0, 0, 0.5);
 border-color:#000;
 }
 
-.profilelink:not(:first-child),
+.profilelink,
 .addpagelink {
 margin-left:8px;
 }
@@ -96,15 +124,37 @@ height:32px;
 width:32px;
 }
 
+#profilepictures,
+#user_profilepictures,
+#preview_profilepictures {
+padding:30px;
+}
+
+#profilepictures > header,
+#user_profilepictures > header,
+#preview_profilepictures > header {
+font-size:26pt;
+margin-bottom:14px;
+}
+
+#profileactivities,
+#user_profileactivities,
+#preview_profileactivities {
+padding:30px;
+}
+
+#profileactivities > header,
+#user_profileactivities > header,
+#preview_profileactivities > header {
+font-size:26pt;
+margin-bottom:14px;
+}
+
 #addnewpage {
 display:none;
 margin:0 auto;
 margin-top:24px;
 width:282px;
-}
-
-#profileactivities {
-padding:30px;
 }
 
 #loggedin,
@@ -148,7 +198,8 @@ padding:14px;
 text-align:right;
 }
 
-#previewprofile {
+#user_profile,
+#preview_profile {
 display:none;
 }
 
