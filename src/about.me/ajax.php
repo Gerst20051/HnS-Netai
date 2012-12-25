@@ -5,9 +5,6 @@ require_once 'config.inc.php';
 require_once 'functions.inc.php';
 require_once 'mysql.class.php';
 
-if (!$con = mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD)) throw new Exception('Error connecting to the server');
-if (!mysql_select_db(MYSQL_DATABASE,$con)) throw new Exception('Error selecting database');
-
 switch ($_SERVER['REQUEST_METHOD']) {
 case 'POST': $_REQ = $_POST; break;
 case 'GET': $_REQ = $_GET; break;
@@ -224,7 +221,7 @@ if ($ACTION == 'logged') {
 				$pages = json_decode($pages);
 				foreach ($pages as $key => $value) {
 					$url = parseURL($value->url);
-					if (strpos($url['url'], 'facebook.com')) {
+					if (strpos($url['host'], 'facebook.com')) {
 						$fb_username = $url['path'];
 						break;
 					}
@@ -247,7 +244,7 @@ if ($ACTION == 'logged') {
 		if ($db->numRows()) {
 			require_once 'pictures.inc.php';
 			$user = $db->fetchParsedRow();
-			$pictures = new UserPictures();
+			$pictures = new UserPictures(getUserAccounts($PAGEURL));
 			$data = $pictures->retrieve();
 			print_json(array('pictures'=>$data));
 		} else print_json(array('pictures'=>false));
@@ -262,7 +259,7 @@ if ($ACTION == 'logged') {
 		if ($db->numRows()) {
 			require_once 'activities.inc.php';
 			$user = $db->fetchParsedRow();
-			$activities = new UserActivities();
+			$activities = new UserActivities(getUserAccounts($PAGEURL));
 			$data = $activities->retrieve();
 			print_json(array('activities'=>$data));
 		} else print_json(array('activities'=>false));
@@ -272,6 +269,37 @@ if ($ACTION == 'logged') {
 	}
 }
 break;
+}
+
+function getUserAccounts($pageurl = ""){
+	if (!check($pageurl)) return false;
+	try {
+		$db = new MySQL();
+		$db->sfquery(array('SELECT pages FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$pageurl));
+		if ($db->numRows()) {
+			$row = $db->fetchParsedRow();
+			$pages = $row['pages'];
+			if (strlen($pages)) {
+				$pages = json_decode($pages);
+				$final = array('services'=>array(),'usernames'=>array());
+				foreach ($pages as $key => $value) {
+					$url = parseURL($value->url);
+					$host = $url['host'];
+					$urlparts = explode('.', $host);
+					$sitename = $urlparts[count($urlparts)-2];
+					$final['services'][] = $sitename;
+					if (-1 < strpos($host, 'facebook.com')) {
+						$final['usernames']['facebook'] = $url['path'];
+					} elseif (-1 < strpos($host, 'github.com')) {
+						$final['usernames']['github'] = $url['path'];
+					} elseif (-1 < strpos($host, 'twitter.com')) {
+						$final['usernames']['twitter'] = $url['path'];
+					}
+				}
+				return $final;
+			}
+		}
+	} catch(Exception $e){}
 }
 
 exit();

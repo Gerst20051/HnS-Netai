@@ -1,15 +1,25 @@
 <?php
-class UserPictures {
-private $available_services;
-private $user_services;
-private $services;
-private $data;
+/**
+ * facebook:	https://developers.facebook.com/docs/reference/api/
+ * instagram:	http://instagram.com/developer/
+ * 
+ *
+ */
 
-public function __construct(){
+class UserPictures {
+private $available_services = array();
+private $user_services = array();
+private $user_accounts = array();
+private $services = array();
+private $data = array();
+
+public function __construct($data = array()){
 	$this->available_services = array('facebook','instagram');
-	$this->user_services = array('facebook');
-	$this->services = array_values(array_intersect($available_services, $user_services));
-	$this->data = array();
+	if (is_array($data)) {
+		if (is_array($data['services'])) $this->user_services = $data['services'];
+		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
+	}
+	$this->services = array_values(array_intersect($this->available_services, $this->user_services));
 }
 
 public function retrieve(){
@@ -19,8 +29,9 @@ public function retrieve(){
 		array_push($this->data, $gravatar);
 	}
 
-	foreach ($services as $service) {
-		array_push($this->data, call_user_func_array(array($this,$service)));
+	foreach ($this->services as $service) {
+		$result = $this->$service();
+		if (!is_null($result)) array_push($this->data, $result);
 	}
 
 	return $this->data;
@@ -31,8 +42,8 @@ public function gravatar(){
 	$md5email = md5(strtolower($email));
 	$gravatar = "http://www.gravatar.com/avatar/$md5email?d=404";
 	$headers = get_headers($gravatar,1);
-	if ($headers[0] == 'HTTP/1.0 200 OK') {
-		$gravatar = 'http://www.gravatar.com/avatar/'.$md5email.'?s=250';
+	if (strpos($headers[0], '200 OK')) {
+		$gravatar = 'http://www.gravatar.com/avatar/'.$md5email.'?s=180';
 		$data = array("gravatar"=>$gravatar);
 		return $data;
 	} else {
@@ -41,14 +52,9 @@ public function gravatar(){
 }
 
 public function facebook(){
-	require_once 'api/facebook.inc.php';
-	$facebook_picture = "https://graph.facebook.com/andrew.gerst/picture?type=large";
-	$facebook = new Facebook(array(
-		'appId'  => '404460542963529',
-		'secret' => '8da32c67b3de74a40ffce87be9388ad2',
-	));
-
-	$fb_user = $facebook->api('/'.$fb_username);
+	$facebook = 'https://graph.facebook.com/'.$this->user_accounts['facebook'].'/picture?type=large';
+	$data = array("facebook"=>$facebook);
+	return $data;
 }
 
 public function instagram(){
@@ -56,4 +62,42 @@ public function instagram(){
 	// parse web profile using phpdom
 }
 }
+
+/******************************************
+ ********** Possible Services *************
+ ******************************************
+ * Github
+ * Twitter
+ * Vizify
+ * Foursquare
+ * Pandora
+ * YouTube
+ * MySpace
+ * Dailybooth
+ * Xfire
+ * Tastebuds.fm
+ * Hulu
+ * Khan Academy
+ * Last.fm
+ * Soundcloud
+ * Stumbleupon
+ * Qik
+ * Diigo
+ * Linkedin
+ * Yahoo
+ * Imageshack
+ * Photobucket
+ * Quora
+ * StackOverflow Careers
+ * about.me
+ * Ted
+ * SlideShare
+ * Spotify
+ * Coderwall
+ * Google Code
+ * Pastebin
+ * StackOverflow
+ * Blogger
+ * Google+
+ */
 ?>

@@ -137,6 +137,22 @@ font-size:26pt;
 margin-bottom:14px;
 }
 
+#profilepictures_content > div,
+#user_profilepictures_content > div,
+#preview_profilepictures_content > div {
+text-align:center;
+}
+
+.userpicture {
+display:inline-block;
+padding:8px;
+}
+
+.userpictureimage {
+height:180px;
+width:180px;
+}
+
 #profileactivities,
 #user_profileactivities,
 #preview_profileactivities {

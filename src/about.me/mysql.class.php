@@ -1,5 +1,6 @@
 <?php
 require_once 'mysql.config.php';
+
 class MySQL {
 private $query;
 private $result;

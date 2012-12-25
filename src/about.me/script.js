@@ -183,18 +183,6 @@ onKeyDown: function(e){
 		}
 	}
 },
-loadCoverPhoto: function(){
-	var self = this;
-	$.getJSON(this.ajaxurl, {action:"coverphoto",pageurl:this.page.pageurl}, function(response){
-		if (response.coverphoto !== false) {
-			if (self.logged) {
-				$("#user_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
-			} else {
-				$("#preview_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
-			}
-		}
-	});
-},
 createLinkListItem: function(page){
 	var url = parseURL(page.url);
 	var span = $("<span/>", {
@@ -207,8 +195,76 @@ createLinkListItem: function(page){
 	span.data('href', url.url);
 	return span.append(image);
 },
+createPictureItem: function(item){
+	for (var prop in item) {
+		var span = $("<span/>", {
+			"class": "userpicture"
+		});
+		var image = $("<img/>", {
+			"class": "userpictureimage",
+			src: item[prop]
+		});
+	}
+	return span.append(image);
+},
+createActivityItem: function(item){
+	for (var prop in item) {
+		var div = $("<div/>", {
+			"class": "userpicture"
+		});
+		var span = $("<span/>", {
+			"class": "userpictureimage",
+			text: item[prop]
+		});
+	}
+	return div.append(span);
+},
+loadCoverPhoto: function(){
+	var self = this;
+	$.getJSON(this.ajaxurl, {action:"coverphoto",pageurl:this.page.pageurl}, function(response){
+		if (response.coverphoto !== false) {
+			if (self.logged) {
+				$("#user_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
+			} else {
+				$("#preview_profilecover").show().find('.coverphoto').attr('src',response.coverphoto);
+			}
+		}
+	});
+},
+loadPictures: function(){
+	var self = this, pictures = $("<div/>");
+	$.getJSON(this.ajaxurl, {action:"pictures",pageurl:this.page.pageurl}, function(response){
+		console.log(response);
+		if (response.pictures !== false) {
+			$.each(response.pictures, function(i,v){
+				self.createPictureItem(v).appendTo(pictures);
+			});
+			if (self.logged) {
+				$("#user_profilepictures_content").html(pictures);
+			} else {
+				$("#preview_profilepictures_content").html(pictures);
+			}
+		}
+	});
+},
+loadActivities: function(){
+	var self = this, activities = $("<div/>");
+	$.getJSON(this.ajaxurl, {action:"activities",pageurl:this.page.pageurl}, function(response){
+		console.log(response);
+		if (response.activities !== false) {
+			$.each(response.activities, function(i,v){
+				self.createActivityItem(v).appendTo(activities);
+			});
+			if (self.logged) {
+				$("#user_profileactivities_content").html(activities);
+			} else {
+				$("#preview_profileactivities_content").html(activities);
+			}
+		}
+	});
+},
 displayMe: function(){
-	var self = this, pages = $("<div/>");
+	var self = this, pages = $("<div/>"), pictures = $("<div/>"), activities = $("<div/>");
 	$("#profilename").text(this.user.fullname);
 	$.getJSON(this.ajaxurl, {action:"coverphoto",pageurl:this.user.pageurl}, function(response){
 		if (response.coverphoto !== false) {
@@ -227,6 +283,23 @@ displayMe: function(){
 	});
 	span.append(image).appendTo(pages);
 	$("#profilelinklist").html(pages);
+	$.getJSON(this.ajaxurl, {action:"pictures",pageurl:this.user.pageurl}, function(response){
+		if (response.pictures !== false) {
+			$.each(response.pictures, function(i,v){
+				self.createPictureItem(v).appendTo(pictures);
+			});
+			$("#profilepictures_content").html(pictures);
+		}
+	});
+	$.getJSON(this.ajaxurl, {action:"activities",pageurl:this.user.pageurl}, function(response){
+		console.log(response);
+		if (response.activities !== false) {
+			$.each(response.activities, function(i,v){
+				self.createActivityItem(v).appendTo(activities);
+			});
+			$("#profileactivities_content").html(activities);
+		}
+	});
 },
 displayProfile: function(){
 	var self = this, pages = $("<div/>");
@@ -248,6 +321,8 @@ displayProfile: function(){
 		}
 	}
 	this.loadCoverPhoto();
+	this.loadPictures();
+	this.loadActivities();
 },
 loadProfile: function(pageurl){
 	var self = this;
