@@ -10,6 +10,7 @@ private $available_services = array();
 private $user_services = array();
 private $user_accounts = array();
 private $services = array();
+private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
@@ -17,6 +18,7 @@ public function __construct($data = array()){
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
+		if (check($data['email'])) $this->user_email = $data['email'];
 	}
 	$this->services = array_values(array_intersect($this->available_services, $this->user_services));
 }
@@ -39,7 +41,7 @@ public function twitter(){
 	require_once 'api/twitter.inc.php';
 	$twitter->request('GET', $twitter->url('1.1/statuses/user_timeline'),
 		array(
-			'screen_name'		=> "andrewmofizzy",
+			'screen_name'		=> $this->user_accounts['twitter'],
 			'include_entities'	=> false,
 			'exclude_replies'	=> true,
 			'trim_user'			=> true,

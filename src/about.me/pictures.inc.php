@@ -11,6 +11,7 @@ private $available_services = array();
 private $user_services = array();
 private $user_accounts = array();
 private $services = array();
+private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
@@ -18,15 +19,15 @@ public function __construct($data = array()){
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
+		if (check($data['email'])) $this->user_email = $data['email'];
 	}
 	$this->services = array_values(array_intersect($this->available_services, $this->user_services));
 }
 
 public function retrieve(){
-	$gravatar = $this->gravatar();
-
-	if (is_array($gravatar)) {
-		array_push($this->data, $gravatar);
+	if (check($this->user_email)) {
+		$gravatar = $this->gravatar();
+		if (is_array($gravatar)) array_push($this->data, $gravatar);
 	}
 
 	foreach ($this->services as $service) {
@@ -38,8 +39,7 @@ public function retrieve(){
 }
 
 public function gravatar(){
-	$email = "gerst20051@gmail.com";
-	$md5email = md5(strtolower($email));
+	$md5email = md5(strtolower($this->user_email));
 	$gravatar = "http://www.gravatar.com/avatar/$md5email?d=404";
 	$headers = get_headers($gravatar,1);
 	if (strpos($headers[0], '200 OK')) {

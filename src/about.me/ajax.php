@@ -243,7 +243,6 @@ if ($ACTION == 'logged') {
 		$db->sfquery(array('SELECT email, pages, pageurl FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$PAGEURL));
 		if ($db->numRows()) {
 			require_once 'pictures.inc.php';
-			$user = $db->fetchParsedRow();
 			$pictures = new UserPictures(getUserAccounts($PAGEURL));
 			$data = $pictures->retrieve();
 			print_json(array('pictures'=>$data));
@@ -258,7 +257,6 @@ if ($ACTION == 'logged') {
 		$db->sfquery(array('SELECT email, pages, pageurl FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$PAGEURL));
 		if ($db->numRows()) {
 			require_once 'activities.inc.php';
-			$user = $db->fetchParsedRow();
 			$activities = new UserActivities(getUserAccounts($PAGEURL));
 			$data = $activities->retrieve();
 			print_json(array('activities'=>$data));
@@ -275,13 +273,13 @@ function getUserAccounts($pageurl = ""){
 	if (!check($pageurl)) return false;
 	try {
 		$db = new MySQL();
-		$db->sfquery(array('SELECT pages FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$pageurl));
+		$db->sfquery(array('SELECT email, pages FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_TABLE,$pageurl));
 		if ($db->numRows()) {
 			$row = $db->fetchParsedRow();
 			$pages = $row['pages'];
 			if (strlen($pages)) {
 				$pages = json_decode($pages);
-				$final = array('services'=>array(),'usernames'=>array());
+				$final = array('services'=>array(),'usernames'=>array(),'email'=>$row['email']);
 				foreach ($pages as $key => $value) {
 					$url = parseURL($value->url);
 					$host = $url['host'];
