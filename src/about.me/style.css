@@ -278,6 +278,10 @@ margin-top:20px;
 padding-bottom:20px;
 }
 
+.backtotop-link {
+float:right;
+}
+
 .buttonTools {
 height:30px;
 margin-top:5px;

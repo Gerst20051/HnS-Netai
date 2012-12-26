@@ -14,7 +14,7 @@
  *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy
  *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/uploads
  *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/subscriptions
- * 
+ * blogspot:	http://andrewgerst.blogspot.com/feeds/posts/default?alt=json
  *
  */
 

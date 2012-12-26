@@ -43,7 +43,7 @@ if ($ACTION == 'login') {
 				$_SESSION['last_login'] = $row['last_login'];
 				$last_login = time();
 				$logins = $row['logins']+1;
-				$db->sfquery(array('UPDATE `%s` SET last_login = "%s", logins = "%s" WHERE user_id = %s',MYSQL_TABLE,$last_login,$logins,$_SESSION['user_id']));
+				$db->sfquery(array('UPDATE `%s` SET last_login = "%s", logins = %s WHERE user_id = %s',MYSQL_TABLE,$last_login,$logins,$_SESSION['user_id']));
 				print_json(array('logged'=>true));
 			} else print_json(array('logged'=>false));
 		} else print_json(array('logged'=>false));
@@ -204,6 +204,8 @@ if ($ACTION == 'logged') {
 		$db->sfquery(array('SELECT %s FROM `%s` WHERE pageurl = "%s" LIMIT 1',MYSQL_ALL,MYSQL_TABLE,$PAGEURL));
 		if ($db->numRows()) {
 			$data = $db->fetchParsedRow();
+			$views = $data['views']+1;
+			$db->sfquery(array('UPDATE `%s` SET views = %s WHERE pageurl = "%s"',MYSQL_TABLE,$views,$PAGEURL));
 			print_json(array('user'=>$data));
 		} else print_json(array('user'=>false));
 	} catch(Exception $e) {

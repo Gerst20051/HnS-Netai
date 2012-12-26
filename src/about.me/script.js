@@ -334,7 +334,7 @@ loadCoverPhoto: function(){
 loadPictures: function(){
 	var self = this, pictures = $("<div/>");
 	$.getJSON(this.ajaxurl, {action:"pictures",pageurl:this.page.pageurl}, function(response){
-		if (response.pictures !== false) {
+		if (response.pictures.length) {
 			$.each(response.pictures, function(i,v){
 				self.createPictureItem(v).appendTo(pictures);
 			});
@@ -355,6 +355,7 @@ loadActivities: function(){
 			});
 			if (self.logged) {
 				$("#user_profileactivities_content").html(activities);
+
 			} else {
 				$("#preview_profileactivities_content").html(activities);
 			}
@@ -382,7 +383,7 @@ displayMe: function(){
 	span.append(image).appendTo(pages);
 	$("#profilelinklist").html(pages);
 	$.getJSON(this.ajaxurl, {action:"pictures",pageurl:this.user.pageurl}, function(response){
-		if (response.pictures !== false) {
+		if (response.pictures.length) {
 			$.each(response.pictures, function(i,v){
 				self.createPictureItem(v).appendTo(pictures);
 			});
@@ -531,6 +532,9 @@ dom: function(){
 	});
 	$("#addnewpage").on('click','#b_addpage',function(){
 		self.addPage();
+	});
+	$("footer").on('click','.backtotop-link',function(){
+		$.scrollTo(0, 1000);
 	});
 }
 };

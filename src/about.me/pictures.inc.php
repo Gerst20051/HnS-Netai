@@ -77,6 +77,10 @@ public function twitter(){
 		return $data;
 	}
 }
+
+public function youtube(){
+	
+}
 }
 
 /******************************************
