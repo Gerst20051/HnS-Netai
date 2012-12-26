@@ -127,7 +127,7 @@ width:32px;
 #profilepictures,
 #user_profilepictures,
 #preview_profilepictures {
-padding:30px;
+padding:30px 30px 0 30px;
 }
 
 #profilepictures > header,
@@ -164,6 +164,59 @@ padding:30px;
 #preview_profileactivities > header {
 font-size:26pt;
 margin-bottom:14px;
+}
+
+.activity {
+margin-bottom:10px;
+padding-bottom:10px;
+}
+
+.activity a:hover {
+text-decoration:underline;
+}
+
+.activityheader {
+background-color:#ddd;
+border-bottom:1px solid #000;
+padding:20px;
+margin-bottom:10px;
+}
+
+.activitypanel {
+padding:10px;
+}
+
+.activityheader_content {
+display:inline-block;
+float:right;
+}
+
+.panel-twitter-statuscount {
+margin-left:8px;
+}
+
+.panel-twitter-handle {
+margin-left:8px;
+}
+
+.panel-twitter-item {
+padding:10px 0;
+}
+
+.panel-github-item {
+padding:14px 0;
+}
+
+.panel-github-handle {
+margin-left:8px;
+}
+
+.panel-github-item-repodate {
+float:right;
+}
+
+.panel-github-item-description {
+margin-top:6px;
 }
 
 #addnewpage {

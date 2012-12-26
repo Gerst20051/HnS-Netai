@@ -2,6 +2,19 @@
 /**
  * facebook:	https://developers.facebook.com/docs/reference/api/
  * twitter: 	https://dev.twitter.com/
+ *				https://dev.twitter.com/docs/api/1/get/followers/ids
+ *				https://api.twitter.com/1/followers/ids.json?cursor=-1&screen_name=twitterapi
+ *
+ *				https://api.twitter.com/1/friends/ids.json?cursor=-1&screen_name=twitterapi
+ *				https://dev.twitter.com/docs/api/1/get/users/lookup
+ *				https://api.twitter.com/1/users/lookup.json?screen_name=twitterapi,twitter&include_entities=true
+ * github: 		http://developer.github.com/v3/
+ * foursquare: 	https://developer.foursquare.com/
+ * youtube: 	https://developers.google.com/youtube/2.0/reference
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/uploads
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/subscriptions
+ * 
  *
  */
 
@@ -14,7 +27,7 @@ private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
-	$this->available_services = array('facebook','twitter');
+	$this->available_services = array('facebook','twitter','github');
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
@@ -23,10 +36,17 @@ public function __construct($data = array()){
 	$this->services = array_values(array_intersect($this->available_services, $this->user_services));
 }
 
+private function parse_tweet($tweet){
+	$search = array('|(http://[^ ]+)|', '/(^|[^a-z0-9_])@([a-z0-9_]+)/i', '/(^|[^a-z0-9_])#([a-z0-9_]+)/i');
+	$replace = array('<a target="_blank" href="$1">$1</a>', '$1<a target="_blank" href="http://twitter.com/$2">@$2</a>', '$1<a target="_blank" href="http://search.twitter.com/search?q=$2&src=hash">#$2</a>');
+	$tweet = preg_replace($search, $replace, $tweet);
+	return $tweet;
+}
+
 public function retrieve(){
 	foreach ($this->services as $service) {
 		$result = $this->$service();
-		if (!is_null($result)) array_push($this->data, $result);
+		if (!is_null($result)) $this->data[$service] = $result;
 	}
 	return $this->data;
 }
@@ -43,23 +63,52 @@ public function twitter(){
 		array(
 			'screen_name'		=> $this->user_accounts['twitter'],
 			'include_entities'	=> false,
-			'exclude_replies'	=> true,
+			'exclude_replies'	=> false,
 			'trim_user'			=> true,
 			'count'				=> 10
 		)
 	);
-	$data = $twitter->response;
-	if ($data['code'] == 200) {
-		$tweets = json_decode($data['response']);
-		$reply = array();
-		foreach ($tweets as $tweet) {
-			$text = $tweet->text;
+	$data_timeline = $twitter->response;
+	$twitter->request('GET', $twitter->url('1.1/users/show'),
+		array(
+			'screen_name'		=> $this->user_accounts['twitter'],
+		)
+	);
+	$data_user = $twitter->response;
+	if ($data_timeline['code'] == 200 && $data_user['code'] == 200) {
+		$response_timeline = json_decode($data_timeline['response']);
+		$response_user = json_decode($data_user['response']);
+		$reply = array(
+			'handle'=>$this->user_accounts['twitter'],
+			'statuscount'=>$response_user->statuses_count,
+			'followerscount'=>$response_user->followers_count,
+			'tweets'=>array()
+		);
+		foreach ($response_timeline as $tweet) {
+			$text = $this->parse_tweet($tweet->text);
 			$date = $tweet->created_at;
-			array_push($reply, array('text'=>$text,'date'=>$date));
+			array_push($reply['tweets'], array('text'=>$text,'date'=>$date));
 		}
-		$final = array("twitter"=>$reply);
-		return $final;
+		return $reply;
 	}
+}
+
+public function github(){
+	$handle = $this->user_accounts['github'];
+	$data = getJSON('https://api.github.com/users/'.$handle.'/repos');
+	$reply = array(
+		'handle'=>$handle,
+		'repos'=>array()
+	);
+	foreach ($data as $repo) {
+		$name = $repo->name;
+		$url = str_replace(array('api.','/repos','{archive_format}{/ref}'), '', $repo->archive_url);
+		$description = $repo->description;
+		$language = $repo->language;
+		$date = $repo->pushed_at;
+		array_push($reply['repos'], array('name'=>$name,'url'=>$url,'description'=>$description,'language'=>$language,'date_pushed'=>$date));
+	}
+	return $reply;
 }
 }
 
@@ -98,5 +147,8 @@ public function twitter(){
  * StackOverflow
  * Blogger
  * Google+
+ * Vimeo
+ * Formspring
+ ** Tumblr
  */
 ?>

@@ -15,7 +15,7 @@ private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
-	$this->available_services = array('facebook','instagram');
+	$this->available_services = array('facebook','instagram','twitter');
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
@@ -61,6 +61,22 @@ public function instagram(){
 	// work to be done
 	// parse web profile using phpdom
 }
+
+public function twitter(){
+	require_once 'api/twitter.inc.php';
+	$twitter->request('GET', $twitter->url('1.1/users/show'),
+		array(
+			'screen_name'		=> $this->user_accounts['twitter'],
+		)
+	);
+	$data = $twitter->response;
+	if ($data['code'] == 200) {
+		$response_user = json_decode($data['response']);
+		$url = str_replace('_normal', '', $response_user->profile_image_url);
+		$data = array("twitter"=>$url);
+		return $data;
+	}
+}
 }
 
 /******************************************
@@ -99,5 +115,8 @@ public function instagram(){
  * StackOverflow
  * Blogger
  * Google+
+ ** http://www.flickr.com/photos/adamparkzer
+ ** Tumblr
+ ** 
  */
 ?>

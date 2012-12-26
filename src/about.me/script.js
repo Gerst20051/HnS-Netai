@@ -207,17 +207,117 @@ createPictureItem: function(item){
 	}
 	return span.append(image);
 },
-createActivityItem: function(item){
-	for (var prop in item) {
-		var div = $("<div/>", {
-			"class": "userpicture"
-		});
-		var span = $("<span/>", {
-			"class": "userpictureimage",
-			text: item[prop]
-		});
+twitterDate: function(datetime){
+	var datetime = new Date(datetime),
+		hours = datetime.getHours(),
+		prefix = "AM",
+		minutes = datetime.getMinutes(),
+		seconds = datetime.getSeconds();
+	if (hours > 12) { hours = hours - 12; prefix = "PM"; }
+	else if (hours == 0) hours = 12;
+	if (minutes < 10) { minutes = '0'+minutes; }
+	var monthArray = ['January','February','March','April','May','June','July','August','September','October','November','December'],
+		monthShortArray = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec'],
+		dayArray = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+		dayShortArray = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+		time = hours + ":" + minutes + " " + prefix,
+		timeordate = '';
+	if (today(datetime)) {
+		timeordate = time;
+	} else if (yesterday(datetime)) {
+		timeordate = 'Yesterday ' + time;
+	} else {
+		var date = dayShortArray[datetime.getDay()] + ", " + monthShortArray[datetime.getMonth()] + " " + datetime.getDate() + ", " + datetime.getFullYear();
+		timeordate = time+' on '+date;
 	}
-	return div.append(span);
+	return timeordate;
+},
+createActivityItem: function(name,data){
+	var self = this;
+	var container = $("<div/>",{id:"activity-"+name,"class":"activity"});
+	var header = $("<div/>", {
+		"class": "activityheader",
+		text: name.toUpperCase()
+	});
+	var headercontent = $("<div/>", {
+		"class": "activityheader_content"
+	});
+	var activities = {
+		facebook: function(){
+			var panel = $("<div/>", {
+				"class": "activitypanel"
+			});
+			return panel;
+		},
+		twitter: function(){
+			var handle = $("<span/>", {
+				"class": "panel-twitter-handle",
+				html: '<a target="_blank" href="http://twitter.com/'+data.handle+'">@'+data.handle+'</a>'
+			});
+			var statuscount = $("<span/>", {
+				"class": "panel-twitter-statuscount",
+				text: "tweets: "+data.statuscount
+			});
+			var followerscount = $("<span/>", {
+				"class": "panel-twitter-followerscount",
+				text: "followers: "+data.followerscount
+			});
+			headercontent.append(followerscount).append(statuscount).append(handle);
+			var panel = $("<div/>", {
+				"class": "activitypanel",
+			});
+			$.each(data.tweets, function(i,v){
+				var item = $("<div/>", {
+					"class": "panel-twitter-item",
+					html: self.twitterDate(v.date) + " - " + v.text
+				});
+				item.appendTo(panel);
+			});
+			return panel;
+		},
+		github: function(){
+			var handle = $("<span/>", {
+				"class": "panel-github-handle",
+				html: '<a target="_blank" href="http://github.com/'+data.handle+'">@'+data.handle+'</a>'
+			});
+			var statuscount = $("<span/>", {
+				"class": "panel-github-repocount",
+				text: "repos: "+data.repos.length
+			});
+			headercontent.append(statuscount).append(handle);
+			var panel = $("<div/>", {
+				"class": "activitypanel"
+			});
+			$.each(data.repos, function(i,v){
+				var header = $("<div/>", {
+					"class": "panel-github-item-header",
+				});
+				var repolink = $("<span/>", {
+					"class": "panel-github-item-repolink",
+					html: '<a target="_blank" href="'+v.url+'">'+v.name+'</a>'
+				});
+				var repodate = $("<span/>", {
+					"class": "panel-github-item-repodate",
+					html: self.twitterDate(v.date_pushed)
+				});
+				var item = $("<div/>", {
+					"class": "panel-github-item"
+				});
+				item.append(header.append(repolink).append(repodate))
+				if (v.description) {
+					var description = $("<div/>", {
+						"class": "panel-github-item-description",
+						text: v.description
+					});
+					item.append(description);
+				}
+				item.appendTo(panel);
+			});
+			return panel;
+		}
+	};
+	container.append(header.append(headercontent)).append(activities[name]());
+	return container;
 },
 loadCoverPhoto: function(){
 	var self = this;
@@ -234,7 +334,6 @@ loadCoverPhoto: function(){
 loadPictures: function(){
 	var self = this, pictures = $("<div/>");
 	$.getJSON(this.ajaxurl, {action:"pictures",pageurl:this.page.pageurl}, function(response){
-		console.log(response);
 		if (response.pictures !== false) {
 			$.each(response.pictures, function(i,v){
 				self.createPictureItem(v).appendTo(pictures);
@@ -250,10 +349,9 @@ loadPictures: function(){
 loadActivities: function(){
 	var self = this, activities = $("<div/>");
 	$.getJSON(this.ajaxurl, {action:"activities",pageurl:this.page.pageurl}, function(response){
-		console.log(response);
 		if (response.activities !== false) {
 			$.each(response.activities, function(i,v){
-				self.createActivityItem(v).appendTo(activities);
+				self.createActivityItem(i,v).appendTo(activities);
 			});
 			if (self.logged) {
 				$("#user_profileactivities_content").html(activities);
@@ -292,10 +390,9 @@ displayMe: function(){
 		}
 	});
 	$.getJSON(this.ajaxurl, {action:"activities",pageurl:this.user.pageurl}, function(response){
-		console.log(response);
 		if (response.activities !== false) {
 			$.each(response.activities, function(i,v){
-				self.createActivityItem(v).appendTo(activities);
+				self.createActivityItem(i,v).appendTo(activities);
 			});
 			$("#profileactivities_content").html(activities);
 		}
@@ -403,6 +500,7 @@ dom: function(){
 		$("#register").hide();
 	});
 	$("#hd_home").on('click','#homelink',function(){
+		Hash.clear();
 		if (self.logged === false) {
 			$("#preview_profile").hide();
 			$("#splash").show();
