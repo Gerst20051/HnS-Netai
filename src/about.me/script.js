@@ -27,6 +27,7 @@ loaded: false,
 logged: false,
 loginFocus: false,
 registerFocus: false,
+dateIntervalId: 0,
 user: {},
 page: {},
 handleHash: function(){
@@ -72,6 +73,10 @@ loggedOut: function(){
 	$("#loggedout").show();
 	$("#loggedin").hide();
 	$("body").addClass("out").removeClass("in");
+	if (self.dateIntervalId) {
+		window.clearInterval(self.dateIntervalId);
+		self.dateIntervalId = 0;
+	}
 },
 login: function(){
 	var self = this, e = false, $login = $("#f_login"), $email = $login.find("#lemail"), $password = $login.find("#lpassword");
@@ -184,30 +189,6 @@ onKeyDown: function(e){
 		}
 	}
 },
-createLinkListItem: function(page){
-	var url = parseURL(page.url);
-	var span = $("<span/>", {
-		"class": "profilelink"
-	});
-	var image = $("<img/>", {
-		"class": "profilelinkimage",
-		src: getDomainIcon(url.host)
-	});
-	span.data('href', url.url);
-	return span.append(image);
-},
-createPictureItem: function(item){
-	for (var prop in item) {
-		var span = $("<span/>", {
-			"class": "userpicture"
-		});
-		var image = $("<img/>", {
-			"class": "userpictureimage",
-			src: item[prop]
-		});
-	}
-	return span.append(image);
-},
 twitterDate: function(datetime){
 	var datetime = new Date(datetime),
 		hours = datetime.getHours(),
@@ -234,26 +215,59 @@ twitterDate: function(datetime){
 	return timeordate;
 },
 prettyDate: function(date){
-	var date, seconds, formats, i = 0, f;
-	date = new Date(date);
-	seconds = (new Date - date) / 1000;
+	var seconds, formats, i = 0, f;
+	seconds = (new Date - new Date(date)) / 1000;
 	formats = [
-		[60, 'seconds', 1],
-		[120, '1 minute ago'],
-		[3600, 'minutes', 60],
-		[7200, '1 hour ago'],
-		[86400, 'hours', 3600],
-		[172800, 'Yesterday'],
-		[604800, 'days', 86400],
-		[1209600, '1 week ago'],
-		[2678400, 'weeks', 604800]
+		[60, 'just now', 1], // 60
+		[120, '1 minute ago'], // 60*2
+		[3600, 'minutes', 60], // 60*60, 60
+		[7200, '1 hour ago'], // 60*60*2
+		[86400, 'hours', 3600], // 60*60*24, 60*60
+		[172800, 'yesterday'], // 60*60*24*2
+		[604800, 'days', 86400], // 60*60*24*7, 60*60*24
+		[1209600, 'last week'], // 60*60*24*7*4*2
+		[2419200, 'weeks', 604800], // 60*60*24*7*4, 60*60*24*7
+		[4838400, 'last month'], // 60*60*24*7*4*2
+		[29030400, 'months', 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
+		[58060800, 'last year'], // 60*60*24*7*4*12*2
+		[2903040000, 'years', 29030400] // 60*60*24*7*4*12*100, 60*60*24*7*4*12
 	];
 	while (f = formats[i++]) {
 		if (seconds < f[0]) {
 			return f[2] ? Math.floor(seconds/f[2])+' '+f[1]+' ago' : f[1];
 		}
 	}
-	return 'A while ago';
+	return 'a while ago';
+},
+handleDates: function(){
+	var self = this;
+	$(".prettydate").each(function(){
+		$(this).text(self.prettyDate($(this).data('date')));
+	});
+},
+createLinkListItem: function(page){
+	var url = parseURL(page.url);
+	var span = $("<span/>", {
+		"class": "profilelink"
+	});
+	var image = $("<img/>", {
+		"class": "profilelinkimage",
+		src: getDomainIcon(url.host)
+	});
+	span.data('href', url.url);
+	return span.append(image);
+},
+createPictureItem: function(item){
+	for (var prop in item) {
+		var span = $("<span/>", {
+			"class": "userpicture"
+		});
+		var image = $("<img/>", {
+			"class": "userpictureimage",
+			src: item[prop]
+		});
+	}
+	return span.append(image);
 },
 createActivityItem: function(name,data){
 	var self = this;
@@ -302,9 +316,13 @@ createActivityItem: function(name,data){
 			$.each(data.tweets, function(i,v){
 				var item = $("<div/>", {
 					"class": "panel-twitter-item",
-					html: self.twitterDate(v.date) + " - " + v.text
+					html: " - " + v.text
 				});
-				item.appendTo(panel);
+				var date = $("<span/>", {
+					"class": "prettydate",
+					html: self.prettyDate(v.date)
+				}).data('date', v.date);
+				item.prepend(date).appendTo(panel);
 			});
 			return panel;
 		},
@@ -330,9 +348,9 @@ createActivityItem: function(name,data){
 					html: '<a target="_blank" href="'+v.url+'">'+v.name+'</a>'
 				});
 				var repodate = $("<span/>", {
-					"class": "panel-github-item-repodate",
-					html: self.twitterDate(v.date_pushed)
-				});
+					"class": "panel-github-item-repodate prettydate",
+					html: self.prettyDate(v.date_pushed)
+				}).data('date', v.date_pushed);
 				var item = $("<div/>", {
 					"class": "panel-github-item"
 				});
@@ -391,10 +409,10 @@ loadActivities: function(){
 			});
 			if (self.logged) {
 				$("#user_profileactivities_content").html(activities);
-
 			} else {
 				$("#preview_profileactivities_content").html(activities);
 			}
+			self.dateIntervalId = window.setInterval(bind(self, self.handleDates), 60000);
 		}
 	});
 },
