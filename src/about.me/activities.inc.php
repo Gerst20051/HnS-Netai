@@ -78,10 +78,12 @@ public function twitter(){
 	if ($data_timeline['code'] == 200 && $data_user['code'] == 200) {
 		$response_timeline = json_decode($data_timeline['response']);
 		$response_user = json_decode($data_user['response']);
+		$url = $response_user->profile_banner_url.'/web';
 		$reply = array(
 			'handle'=>$this->user_accounts['twitter'],
 			'statuscount'=>$response_user->statuses_count,
 			'followerscount'=>$response_user->followers_count,
+			'coverphoto'=>$url,
 			'tweets'=>array()
 		);
 		foreach ($response_timeline as $tweet) {

@@ -266,6 +266,16 @@ createActivityItem: function(name,data){
 			var panel = $("<div/>", {
 				"class": "activitypanel",
 			});
+			if (data.coverphoto.length) {
+				var cover = $("<div/>", {
+					"class": "panel-twitter-cover",
+				});
+				var image = $("<img/>", {
+					"class": "panel-twitter-coverphoto",
+					src: data.coverphoto
+				});
+				cover.append(image).insertAfter(header);
+			}
 			$.each(data.tweets, function(i,v){
 				var item = $("<div/>", {
 					"class": "panel-twitter-item",

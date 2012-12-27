@@ -2,7 +2,7 @@
 /**
  * facebook:	https://developers.facebook.com/docs/reference/api/
  * instagram:	http://instagram.com/developer/
- * 
+ * flickr: 		http://flickr.com/services/api/
  *
  */
 
