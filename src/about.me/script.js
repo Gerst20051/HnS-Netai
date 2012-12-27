@@ -16,6 +16,7 @@
 }();
 
 function main($){
+'use strict';
 if (main.run) return;
 else main.run = true;
 
@@ -232,6 +233,28 @@ twitterDate: function(datetime){
 	}
 	return timeordate;
 },
+prettyDate: function(date){
+	var date, seconds, formats, i = 0, f;
+	date = new Date(date);
+	seconds = (new Date - date) / 1000;
+	formats = [
+		[60, 'seconds', 1],
+		[120, '1 minute ago'],
+		[3600, 'minutes', 60],
+		[7200, '1 hour ago'],
+		[86400, 'hours', 3600],
+		[172800, 'Yesterday'],
+		[604800, 'days', 86400],
+		[1209600, '1 week ago'],
+		[2678400, 'weeks', 604800]
+	];
+	while (f = formats[i++]) {
+		if (seconds < f[0]) {
+			return f[2] ? Math.floor(seconds/f[2])+' '+f[1]+' ago' : f[1];
+		}
+	}
+	return 'A while ago';
+},
 createActivityItem: function(name,data){
 	var self = this;
 	var container = $("<div/>",{id:"activity-"+name,"class":"activity"});
@@ -324,6 +347,9 @@ createActivityItem: function(name,data){
 				item.appendTo(panel);
 			});
 			return panel;
+		},
+		youtube: function(){
+			
 		}
 	};
 	container.append(header.append(headercontent)).append(activities[name]());

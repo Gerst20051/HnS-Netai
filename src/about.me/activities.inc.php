@@ -11,9 +11,11 @@
  * github: 		http://developer.github.com/v3/
  * foursquare: 	https://developer.foursquare.com/
  * youtube: 	https://developers.google.com/youtube/2.0/reference
- *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy
- *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/uploads
- *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/subscriptions
+ *				https://developers.google.com/youtube/2.0/developers_guide_php
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy?alt=json
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/playlists?alt=json
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/uploads?alt=json
+ *				http://gdata.youtube.com/feeds/api/users/andrewmofizzy/subscriptions?alt=json
  * blogspot:	http://andrewgerst.blogspot.com/feeds/posts/default?alt=json
  *
  */
@@ -27,7 +29,7 @@ private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
-	$this->available_services = array('facebook','twitter','github');
+	$this->available_services = array('facebook','twitter','github','youtube');
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
@@ -110,6 +112,24 @@ public function github(){
 		$date = $repo->pushed_at;
 		array_push($reply['repos'], array('name'=>$name,'url'=>$url,'description'=>$description,'language'=>$language,'date_pushed'=>$date));
 	}
+	return $reply;
+}
+
+public function youtube(){
+	$handle = $this->user_accounts['youtube'];
+	$data = getJSON('http://gdata.youtube.com/feeds/api/users/'.$handle.'?alt=json');
+	$entry = $data->entry;
+	$stats = $entry->{'yt$statistics'};
+	$reply = array(
+		'handle'=>$handle,
+		'lastupdated'=>$entry->updated->{'$t'},
+		'lastwebaccess'=>$stats->lastWebAccess,
+		'subscribercount'=>(int) $stats->subscriberCount,
+		'uploadviews'=>(int) $stats->totalUploadViews,
+		'viewcount'=>(int) $stats->viewCount,
+		'uploads'=>array(),
+		'subscriptions'=>array()
+	);
 	return $reply;
 }
 }

@@ -294,6 +294,8 @@ function getUserAccounts($pageurl = ""){
 						$final['usernames']['github'] = $url['path'];
 					} elseif (-1 < strpos($host, 'twitter.com')) {
 						$final['usernames']['twitter'] = $url['path'];
+					} elseif (-1 < strpos($host, 'youtube.com')) {
+						$final['usernames']['youtube'] = $url['path'];
 					}
 				}
 				return $final;

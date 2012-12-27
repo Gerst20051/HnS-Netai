@@ -3,6 +3,7 @@
  * facebook:	https://developers.facebook.com/docs/reference/api/
  * instagram:	http://instagram.com/developer/
  * flickr: 		http://flickr.com/services/api/
+ **				http://www.flickr.com/photos/andrewgerst
  *
  */
 
@@ -15,7 +16,7 @@ private $user_email = '';
 private $data = array();
 
 public function __construct($data = array()){
-	$this->available_services = array('facebook','instagram','twitter');
+	$this->available_services = array('facebook','instagram','twitter','youtube');
 	if (is_array($data)) {
 		if (is_array($data['services'])) $this->user_services = $data['services'];
 		if (is_array($data['usernames'])) $this->user_accounts = $data['usernames'];
@@ -79,19 +80,20 @@ public function twitter(){
 }
 
 public function youtube(){
-	
+	$handle = $this->user_accounts['youtube'];
+	$response = getJSON('http://gdata.youtube.com/feeds/api/users/'.$handle.'?alt=json');
+	$url = str_replace('s88-c-k', 's200-c-k', $response->entry->{'media$thumbnail'}->url);
+	$data = array("youtube"=>$url);
+	return $data;
 }
 }
 
 /******************************************
  ********** Possible Services *************
  ******************************************
- * Github
- * Twitter
  * Vizify
  * Foursquare
  * Pandora
- * YouTube
  * MySpace
  * Dailybooth
  * Xfire
@@ -119,7 +121,6 @@ public function youtube(){
  * StackOverflow
  * Blogger
  * Google+
- ** http://www.flickr.com/photos/adamparkzer
  ** Tumblr
  ** 
  */

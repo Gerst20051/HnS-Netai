@@ -104,7 +104,9 @@ function getJSON($url){
 	curl_close($ch);
 	if (strlen($response)) {
 		$data = json_decode($response);
-		if (is_array($data)) return $data;
+		if (is_array($data) || is_object($data)) {
+			return $data;
+		}
 	}
 }
 ?>
