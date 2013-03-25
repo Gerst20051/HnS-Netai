@@ -30,7 +30,7 @@ if ($ACTION == 'login') {
 		$db = new MySQL();
 		$db->sfquery(array('SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "%s" AND pass = PASSWORD("%s") LIMIT 1',$username,substr(base64_decode($password),3)));		
 		if ($db->numRows() == 1) {
-			$row = $db->fetchAssocRow();
+			$row = $db->fetchParsedRow();
 			$_SESSION['logged'] = true;
 			$_SESSION['user_id'] = $row['user_id'];
 			$_SESSION['username'] = $row['username'];
@@ -198,13 +198,20 @@ CONTENT;
 		exit();
 	}
 } elseif ($ACTION == "userdata") {
-	varcheck($UID,true,$_SESSION['user_id'],"uid");
+	// print_r($_SESSION);
+	if (LOCAL) {
+		// Rethink this strategy because register globals is disabled for netai.
+		varcheck($UID,true,$_SESSION['user_id'],"uid");
+	} else {
+		// $UID = $_SESSION['user_id'];
+		$UID = 1;
+	}
 	try {
 		$db = new MySQL();
 		$db->query('SELECT u.user_id,u.username,i.firstname,i.middlename,i.lastname,i.images FROM (login u JOIN info i ON u.user_id = i.user_id) WHERE u.user_id = '.$UID.' LIMIT 1');
 		if ($db->numRows() == 1) {
 			header('Content-Type: application/json; charset=utf8');
-			print_json(array('user'=>$db->fetchAssocRow()));
+			print_json(array('user'=>$db->fetchParsedRow()));
 		} else print_json(array('user'=>false),true);
 	} catch(Exception $e) {
 		echo $e->getMessage();
