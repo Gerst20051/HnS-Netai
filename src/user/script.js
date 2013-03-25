@@ -130,31 +130,31 @@ onKeyDown: function(e){
 	}
 },
 dom: function(){
-	$("#lusername, #lpassword").live('focus',function(){
+	$(document).on('focus',"#lusername, #lpassword",function(){
 		aC.loginFocus = true;
-	}).live('blur',function(){
+	}).on('blur',"#lusername, #lpassword",function(){
 		aC.loginFocus = false;
 	});
-	$("#b_login_splash").live('click',function(){
+	$(document).on('click',"#b_login_splash",function(){
 		aC.login();
 	});
-	$("#b_register_splash").live('click',function(){
+	$(document).on('click',"#b_register_splash",function(){
 		$("#register").show();
 		$("#login").hide();
 		$("#hnsuser").center();
 	});
-	$("#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city").live('focus',function(){
+	$(document).on('focus',"#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city",function(){
 		aC.registerFocus = true;
-	}).live('blur',function(){
+	}).on('blur',"#reg_username, #reg_password, #reg_name, #reg_email, #reg_hometown, #reg_city",function(){
 		aC.registerFocus = false;
 	});
-	$("#reg_username").live('blur',function(){
+	$(document).on('blur',"#reg_username",function(){
 		aC.checkUsername(this.value);
 	});
-	$("#reg_hometown").live('keyup',function(){
+	$(document).on('keyup',"#reg_hometown",function(){
 		aC.getLocation(this.value);
 	});
-	$("#b_register").live('click',function(){
+	$(document).on('click',"#b_register",function(){
 		if (!aC.regValidate()) return;
 		$("#f_register").find("input,textarea,select,:radio").attr('disabled',true);
 		var output = {}, inputs = $("#f_register").find("input,textarea,select,:radio").filter("[name]");
@@ -168,12 +168,12 @@ dom: function(){
 			} else $("#f_register").find("input,textarea,select,:radio").attr('disabled',false);
 		});
 	});
-	$("#b_login").live('click',function(){
+	$(document).on('click',"#b_login",function(){
 		$("#login").show();
 		$("#register").hide();
 		$("#hnsuser").center();
 	});
-	$(".logout-link").live('click',function(){
+	$(document).on('click',".logout-link",function(){
 		aC.logout();
 	});
 }
