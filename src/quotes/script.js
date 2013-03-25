@@ -25,6 +25,14 @@ function parseHash(){
 	return queryString;
 }
 
+function in_array(needle, haystack){
+	var key = '';
+	for (key in haystack) {
+		if (haystack[key] == needle) return true;
+	}
+	return false;
+}
+
 function main(){
 window.aC = {
 title: "HnS Quotes",
@@ -35,13 +43,16 @@ init: function(){
 	HNS.loggedIn = function(){
 		$("#hns-logout-button").show();
 		$("#hns-login-button").hide();
-		alert("Hello "+HNS.user.fullname+" welcome to our website!");
+		//alert("Hello "+HNS.user.fullname+" welcome to our website!");
+		if (getHash() === "") setHash("home");
+		aC.handleHash();
 	};
 	HNS.loggedOut = function(){
 		$("#hns-login-button").show();
 		$("#hns-logout-button").hide();
+		clearHash();
+		aC.handleHash();
 	};
-	aC.handleHash();
 	aC.dom();
 },
 handleHash: function(){
@@ -54,9 +65,9 @@ handleHash: function(){
 					var quote = v.quote;
 					quotes += aC.listQuote(v.id,quote.name,quote.quote);
 				});
-				$("ul#quotes").html(quotes);
+				$("#quotes").html(quotes);
 			} else {
-				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+				$("#quotes").html('<li class="empty">No Quotes</li>');
 			}
 		});
 	} else if (getHash() == "user") {
@@ -68,26 +79,12 @@ handleHash: function(){
 					var quote = v.quote;
 					quotes += aC.listQuote(v.id,quote.name,quote.quote);
 				});
-				$("ul#quotes").html(quotes);
+				$("#quotes").html(quotes);
 			} else {
-				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+				$("#quotes").html('<li class="empty">No Quotes</li>');
 			}
 		});
-	} else if (parseHash().id) {
-		$.getJSON("ajax.php", {id:parseHash().id,apikey:"hnsapi"}, function(response){
-			if ($.isArray(response)) {
-				aC.quotes = response;
-				var quotes = "";
-				$.each(response, function(i,v){
-					var quote = v.quote;
-					quotes += aC.listQuote(v.id,quote.name,quote.quote);
-				});
-				$("ul#quotes").html(quotes);
-			} else {
-				$("ul#quotes").html('<li class="empty">No Quotes</li>');
-			}
-		});
-	} else {
+	} else if (getHash() == "home") {
 		$.getJSON("ajax.php", {type:"user",apikey:"hnsapi"}, function(response){
 			if ($.isArray(response)) {
 				aC.quotes = response;
@@ -101,6 +98,22 @@ handleHash: function(){
 				$("#quotes").html('<li class="empty">No Quotes</li>');
 			}
 		});
+	} else if (parseHash().id) {
+		$.getJSON("ajax.php", {id:parseHash().id,apikey:"hnsapi"}, function(response){
+			if ($.isArray(response)) {
+				aC.quotes = response;
+				var quotes = "";
+				$.each(response, function(i,v){
+					var quote = v.quote;
+					quotes += aC.listQuote(v.id,quote.name,quote.quote);
+				});
+				$("#quotes").html(quotes);
+			} else {
+				$("#quotes").html('<li class="empty">No Quotes</li>');
+			}
+		});
+	} else {
+		$("#quotes").html('<li class="empty">No Quotes</li>');
 	}
 },
 dom: function(){

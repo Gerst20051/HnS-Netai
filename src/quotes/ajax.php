@@ -39,7 +39,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 	if ($TYPE == 'all') {
 		try {
 			$db = new MySQL();
-			$rows = $db->fetchParsedAll(MYSQL_TABLE);
+			//$rows = $db->fetchParsedAll(MYSQL_TABLE);
+			$db->query('SELECT * FROM '.MYSQL_TABLE);
+			$rows = $db->fetchParsedRows();
 			for ($i=0;$i<count($rows);$i++) {
 				$rows[$i]["quote"] = json_decode($rows[$i]["quote"]);
 			}

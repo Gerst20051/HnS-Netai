@@ -118,6 +118,7 @@ public function fetchParsedRows(){
 }
 
 public function fetchParsedAll($table='info') {
+	// Not working??
 	$this->query('SELECT * FROM '.$table);
 	$rows = array();
 	while ($row = $this->fetchParsedRow()) {
