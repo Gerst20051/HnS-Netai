@@ -91,6 +91,42 @@ public function fetchAssocRows() {
 	return $rows;
 }
 
+public function fetchParsedRow(){
+	$row = mysql_fetch_assoc($this->result);
+	for ($i = 0; $i < mysql_num_fields($this->result); $i++) {
+		$info = mysql_fetch_field($this->result,$i);
+		$type = $info->type;
+		if ($type == 'real') $row[$info->name] = doubleval($row[$info->name]);
+		else if ($type == 'int') $row[$info->name] = intval($row[$info->name]);
+	}
+	$this->data = $row;
+	return $row;
+}
+
+public function fetchParsedRows(){
+	while ($row = mysql_fetch_assoc($this->result)) {
+		for ($i = 0; $i < mysql_num_fields($this->result); $i++) {
+			$info = mysql_fetch_field($this->result,$i);
+			$type = $info->type;
+			if ($type == 'real') $row[$info->name] = doubleval($row[$info->name]);
+			else if ($type == 'int') $row[$info->name] = intval($row[$info->name]);
+		}
+		$rows[] = $row;
+	}
+	$this->data = $rows;
+	return $rows;
+}
+
+public function fetchParsedAll($table='info') {
+	$this->query('SELECT * FROM '.$table);
+	$rows = array();
+	while ($row = $this->fetchParsedRow()) {
+		$rows[] = $row;
+	}
+	$this->data = $rows;
+	return $rows;
+}
+
 public function insert($table, $params) {
 	$values = array_map('mysql_real_escape_string',array_values($params));
 	$keys = array_keys($params);

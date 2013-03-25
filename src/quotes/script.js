@@ -96,19 +96,20 @@ handleHash: function(){
 					var quote = v.quote;
 					quotes += aC.addQuote(v.id,quote.name,quote.quote);
 				});
-				$("ul#quotes").html(quotes);
+				$("#quotes").html(quotes);
 			} else {
-				$("ul#quotes").html('<li class="empty">No Quotes</li>');
+				$("#quotes").html('<li class="empty">No Quotes</li>');
 			}
 		});
 	}
 },
 dom: function(){
-	$("#showall > span").live('click',function(){
+	var quotes = $("#quotes");
+	$("#showall > span").on('click',function(){
 		setHash("all");
 		aC.handleHash();
 	});
-	$("article > header #search").live('keyup',function(){
+	$("article > header").on('keyup','#search',function(){
 		aC.search.splice(0,this.length);
 		if (0 < aC.quotes.length){
 			$.each(aC.quotes, function(i,v){
@@ -119,14 +120,14 @@ dom: function(){
 			});
 		}
 	});
-	$("article > header #logoaction").live('click',function(){
+	$("article > header").on('click','#logoaction',function(){
 		var name = $.trim($("article > header #search").val());
 		if (name.length == 0 || 0 < aC.search.length) name = "";
 		else $("article > header #search").val('');
 		var len = aC.quotes.push({"name":name,"quote":""});
 		$("ul#quotes").prepend(aC.addQuote(len,name)).find("li:first").fadeIn().find("header").click();
 	});
-	$("ul#quotes li > header").live('click',function(){
+	quotes.on('click','li > header',function(){
 		$(this).parent().find('.details').slideToggle('fast');
 		if ($(this).find('.more').is(":visible")){
 			$(this).find('.more').hide().parent().find('.less').show();
@@ -134,10 +135,10 @@ dom: function(){
 			$(this).find('.less').hide().parent().find('.more').show();
 		}
 	});
-	$("ul#quotes li .details").live('click',function(){
+	quotes.on('click','.details',function(){
 		return false;
 	});
-	$("ul#quotes li .save").live('click',function(){
+	quotes.on('click','.save',function(){
 		var target = $(this).parents('li');
 		var id = target.attr('id').substring(6);
 		var name = target.find('#name').val();
@@ -148,7 +149,7 @@ dom: function(){
 		});
 		return false;
 	});
-	$("ul#quotes li .undo").live('click',function(){
+	quotes.on('click','.undo',function(){
 		var target = $(this).parents('li');
 		var id = target.attr('id').substring(6);
 		var quote = aC.quotes[id-1];
@@ -157,7 +158,7 @@ dom: function(){
 		target.find('#quote').val(quote.quote);
 		return false;
 	});
-	$("ul#quotes li .delete").live('click',function(){
+	quotes.on('click','.delete',function(){
 		var target = $(this).parents('li');
 		var id = target.attr('id').substring(6);
 		var name = target.find('#name').val();
@@ -171,17 +172,18 @@ dom: function(){
 		}
 		return false;
 	});
-	$("ul#quotes li input").live('change',function(){
+	quotes.on('change','li input',function(){
 		$(this).parents('li').find('.savespan').show();
-	}).live('click',function(){
+	}).on('click','input',function(){
 		$(this).select();
 	});
-	$("ul#quotes li textarea").live('change',function(){
+	quotes.on('change','textarea',function(){
+		alert("hey");
 		$(this).parents('li').find('.savespan').show();
-	}).live('click',function(){
+	}).on('click','textarea',function(){
 		$(this).select();
 	});
-	$("ul#quotes li input#name").live('keyup',function(){
+	quotes.on('keyup','input#name',function(){
 		var name = $(this).val();
 		if (name == "") name = "No Name";
 		$(this).parents('li').find('.name').html(name);
@@ -190,7 +192,7 @@ dom: function(){
 addQuote: function(id,name,quote){
 	if (aC.quotes.length < 2) $("ul#quotes").find('.empty').remove();
 	var html = '<li id="quote-'+id+'">';
-	if (arguments.length == 2){ var html = '<li id="quote-'+id+'" class="new">'; if ($.trim(name) == "") name="New Quote"; quote=""; }
+	if (arguments.length == 2){ html = '<li id="quote-'+id+'" class="new">'; if ($.trim(name) == "") name="New Quote"; quote=""; }
 	html += '<header><aside class="links"><span class="savespan"><a href="#" class="save">save</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" class="undo">undo</a>&nbsp;&nbsp;|&nbsp;&nbsp;</span><a href="#" class="more">more</a><a href="#" class="less">less</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" class="delete">delete</a></aside><aside class="name">'+name+'</aside></header>';
 	html += '<div class="details">';
 	html += '<div><label for="name">name</label><input id="name" type="text" value="'+name+'"/></div>';

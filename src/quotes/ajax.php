@@ -24,13 +24,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 	try {
 		$db = new MySQL();
 		$db->query('SELECT * FROM `'.MYSQL_TABLE.'` WHERE owner_id = '.$ID);
-		$rows = $db->fetchAssocRows();
+		$rows = $db->fetchParsedRows();
 		for ($i=0;$i<count($rows);$i++) {
 			$rows[$i]["quote"] = json_decode($rows[$i]["quote"]);
 		}
 		if (0 < $db->numRows()) {
-			header('Content-Type: text/javascript; charset=utf8');
-			print_r(json_encode($rows));
+			print_json($rows);
 		} else die('0');
 	} catch(Exception $e) {
 		echo $e->getMessage();
@@ -40,13 +39,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 	if ($TYPE == 'all') {
 		try {
 			$db = new MySQL();
-			$rows = $db->fetchAssocAll(MYSQL_TABLE);
+			$rows = $db->fetchParsedAll(MYSQL_TABLE);
 			for ($i=0;$i<count($rows);$i++) {
 				$rows[$i]["quote"] = json_decode($rows[$i]["quote"]);
 			}
 			if (0 < $db->numRows()) {
-				header('Content-Type: text/javascript; charset=utf8');
-				print_r(json_encode($rows));
+				print_json($rows);
 			} else die('0');
 		} catch(Exception $e) {
 			echo $e->getMessage();
@@ -56,13 +54,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 		try {
 			$db = new MySQL();
 			$db->query('SELECT * FROM `'.MYSQL_TABLE.'` WHERE owner_id = '.$UID);
-			$rows = $db->fetchAssocRows();
+			$rows = $db->fetchParsedRows();
 			for ($i=0;$i<count($rows);$i++) {
 				$rows[$i]["quote"] = json_decode($rows[$i]["quote"]);
 			}
 			if (0 < $db->numRows()) {
-				header('Content-Type: text/javascript; charset=utf8');
-				print_r(json_encode($rows));
+				print_json($rows);
 			} else die('0');
 		} catch(Exception $e) {
 			echo $e->getMessage();
