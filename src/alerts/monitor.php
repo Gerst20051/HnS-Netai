@@ -1,4 +1,6 @@
 <?php
+require_once 'phpdom.php';
+
 function init(){
 	// include 'cod/index.php';
 	// checkHnSYouTube();
