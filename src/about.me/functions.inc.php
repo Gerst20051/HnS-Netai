@@ -96,10 +96,15 @@ function parseURL($url){
 	);
 }
 
-function getJSON($url){
+function getJSON($url, $service = ''){
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+	if ($service === 'github') {
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Gerst20051');
+	}
+
 	$response = curl_exec($ch);
 	curl_close($ch);
 	if (strlen($response)) {

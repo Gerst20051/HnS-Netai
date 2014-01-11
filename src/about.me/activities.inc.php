@@ -99,7 +99,7 @@ public function twitter(){
 
 public function github(){
 	$handle = $this->user_accounts['github'];
-	$data = getJSON('https://api.github.com/users/'.$handle.'/repos');
+	$data = getJSON('https://api.github.com/users/'.$handle.'/repos', 'github');
 	$reply = array(
 		'handle'=>$handle,
 		'repos'=>array()
