@@ -235,6 +235,11 @@ float:right;
 margin-top:6px;
 }
 
+.panel-youtube-handle,
+.panel-youtube-uploadviews {
+margin-left:8px;
+}
+
 #addnewpage {
 display:none;
 margin:0 auto;

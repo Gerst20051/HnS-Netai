@@ -367,7 +367,22 @@ createActivityItem: function(name,data){
 			return panel;
 		},
 		youtube: function(){
-			
+			var handle = $("<span/>", {
+				"class": "panel-youtube-handle",
+				html: '<a target="_blank" href="http://youtube.com/'+data.handle+'">@'+data.handle+'</a>'
+			});
+			var subscribercount = $("<span/>", {
+				"class": "panel-youtube-subscribercount",
+				text: "subscribers: "+data.subscribercount
+			});
+			var uploadviews = $("<span/>", {
+				"class": "panel-youtube-uploadviews",
+				text: "views: "+data.uploadviews
+			});
+			headercontent.append(subscribercount).append(uploadviews).append(handle);
+			var panel = $("<div/>", {
+				"class": "activitypanel"
+			});
 		}
 	};
 	container.append(header.append(headercontent)).append(activities[name]());
